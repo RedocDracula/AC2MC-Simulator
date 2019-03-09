@@ -14,6 +14,8 @@ class Stype {
     vector <string> opcode;
     vector <string> funct3;
 
+    /* Function extracts the all the integers in an instruction basically */
+    /* for ex : sw x2,24(x3) : will extract 2,24,3 i.e parameters needed for MC generation.*/
     vector <int> extractint(string str) { // recieves a string and extracts all the integers and returns them in a list (vector)
         vector <int> result;
         int sum,currentint;
@@ -33,11 +35,12 @@ class Stype {
             result.push_back(sum);
         }
 
-        return result;
+        return result; //returning vector of extracted parameters
     }
     
     public:
 
+    // initialise the vectors with their respective values from the input file.
     void initialise (string filename) {
         ifstream ifile(filename.c_str());
         string line;
@@ -52,7 +55,8 @@ class Stype {
             funct3.push_back(token);
         }
     }
-
+    
+    // checks if given command is present in the list of S Type instructions.
     bool check(string command)
     {
         stringstream ss(command);
@@ -64,15 +68,15 @@ class Stype {
         else
         return true;
     }
-
+    
     bitset <32> decode (string instruction) {
         bitset <32> MachineCode;
-        stringstream ss(instruction);
+        stringstream ss(instruction); //helpful for tokenizing space separated strings.
         vector <int> parameters = extractint(instruction); // extracted all register names, offsets etc.
         string action;
         ss >> action;
         int index = find(instructions.begin(),instructions.end(),action) - instructions.begin();
-        string opcodestr,funct3str,rs1str,rs2str;
+        string opcodestr,funct3str;
         
         opcodestr = opcode[index];
         funct3str = funct3[index];
@@ -80,12 +84,11 @@ class Stype {
         bitset <5> rs2(parameters[0]),rs1(parameters[2]);
 
         for(int i=0;i<7;i++)
-            MachineCode[i] = (opcodestr[opcodestr.size()-1-i] == '0') ? 0 : 1;
+            MachineCode[i] = (opcodestr[opcodestr.size()-1-i] == '0') ? 0 : 1; //copying opcode string to the opcode field
         
         for(int i=0;i<5;i++)
             MachineCode[i+7] = immediate[i];
 
-        cout<<"funct3 : "<<funct3str<<endl;
         
         for(int i = 0; i<3; i++)
             MachineCode[i+12] = (funct3str[i] == '0') ? 0 : 1;
@@ -106,4 +109,3 @@ class Stype {
 
     
 };
-
