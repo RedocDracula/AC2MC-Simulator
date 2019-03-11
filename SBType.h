@@ -16,7 +16,7 @@ class SBType {
     vector<string> funct3;
 
     /* Function extracts the all the integers in an instruction basically */
-    /* for ex : beq x2,x3,LABEL : will extract 2,24,3 i.e parameters needed for MC generation.*/
+    /* for ex : beq x2,x3,LABEL : will extract 2,3 i.e parameters needed for MC generation.*/
     vector <int> extractint(string str) { 
         // recieves a string and extracts all the integers and returns them in a list (vector)
         // countCommas counts the commas to ensure no numbers are picked off the LABEL.
