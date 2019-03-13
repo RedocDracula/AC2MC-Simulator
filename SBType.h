@@ -64,10 +64,9 @@ class SBType {
             ss >> token;
             funct3.push_back(token);
         }
-        cout<<"Initialised with length = "<<instructions.size()<<endl;
     }
 
-    bool check(string command)
+    bool isPresent(string command)
     {
         stringstream ss(command);
         string ins;
