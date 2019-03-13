@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Rtype {
+class RType {
     private:
     vector <string> instructions;    // instruction : 0->31 | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
     vector <string> opcode;
@@ -61,7 +61,7 @@ class Rtype {
     }
     
     // checks if given command is present in the list of S Type instructions.
-    bool check(string command) {
+    bool isPresent(string command) {
         stringstream ss(command);
         string ins;
         ss >> ins;
