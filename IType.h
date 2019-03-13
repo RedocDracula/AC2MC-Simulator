@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Itype {
+class IType {
     private:
     vector <string> instructions;    // instruction : 0->31 | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
     vector <string> opcode;
@@ -57,7 +57,7 @@ class Itype {
     }
     
     // checks if given command is present in the list of S Type instructions.
-    bool check(string command) {
+    bool isPresent(string command) {
         stringstream ss(command);
         string ins;
         ss >> ins;
@@ -84,8 +84,6 @@ class Itype {
 
         bitset <12> immediate(parameters[2]); // loading offset
         bitset <5> rd(parameters[0]),rs1(parameters[1]);
-        cout << rd <<endl;
-        cout << rs1 <<endl;
 
         for(int i=0;i<7;i++) {
             MachineCode[i] = (opcodestr[opcodestr.size()-1-i] == '0') ? 0 : 1; //copying opcode string to the opcode field
