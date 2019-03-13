@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Stype {
+class SType {
     private:
     vector <string> instructions;    // instruction : | immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
     vector <string> opcode;
@@ -57,7 +57,7 @@ class Stype {
     }
     
     // checks if given command is present in the list of S Type instructions.
-    bool check(string command)
+    bool isPresent(string command)
     {
         stringstream ss(command);
         string ins;
@@ -67,7 +67,7 @@ class Stype {
         return false;
         else
         return true;
-    }stringstream ss(command);
+    }
     
     bitset <32> decode (string instruction) {
         bitset <32> MachineCode;
