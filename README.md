@@ -1,3 +1,3 @@
 # AC2MC-simulator
 
-Use tester.cpp to check your instructions.:)
+Use main.cpp to check your instructions.:)
