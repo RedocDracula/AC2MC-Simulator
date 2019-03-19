@@ -1,6 +1,6 @@
 add x1,x4,x6
 add x5,x3,x7
-jal x3,LABEL
+beq x2,x3,LABEL
 continue:
 add x1,x3,x5
 addi sp,sp,4

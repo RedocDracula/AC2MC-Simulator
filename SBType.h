@@ -16,37 +16,50 @@ class SBType {
     vector<string> funct3;
 
     /* Function extracts the all the integers in an instruction basically */
-    /* for ex : beq x2,x3,LABEL : will extract 2,3 i.e parameters needed for MC generation.*/
+    /* for ex : beq x2,x3,offset : will extract 2,3 i.e parameters needed for MC generation.*/
     vector <int> extractint(string str) { 
         // recieves a string and extracts all the integers and returns them in a list (vector)
         // countCommas counts the commas to ensure no numbers are picked off the LABEL.
         vector <int> result;
-        int sum,currentint, countCommas=0;
+        int sum,currentint, sum2;
         for(int strIndex = 0 ; strIndex < str.size() ; strIndex++) {
             
             sum = 0;
-            bool intfound = 0;
+            bool intfound = 0, intfound2 = 0;
 
-            if(str[strIndex]==','){
-                countCommas++;
-            }
-
-            while(strIndex < str.size() && isdigit(str[strIndex]) && countCommas<2) {
+            while(strIndex < str.size() && isdigit(str[strIndex])) {
                 currentint = str[strIndex] - '0';
                 sum = sum*10 + currentint;
                 strIndex++;
                 intfound = 1;
             }
+
+            if(str[strIndex] == '-'){
+                sum2 = 0;
+                strIndex++;
+                while(strIndex < str.size() && isdigit(str[strIndex])){
+                    currentint = str[strIndex] - '0';
+                    sum2 = sum2*10 + currentint;
+                    strIndex++;
+                    intfound2 = 1;
+                }
+                sum2 = sum2*(-1);
+            }
             
             if(intfound)
                 result.push_back(sum);
+            
+            if(intfound2)
+                result.push_back(sum2);
         }
 
+        for(int i=0;i<3;i++){
+            cout<<result[i]<<' ';
+        }
+        cout<<endl;
         return result; //returning vector of extracted parameters
     }
 
-    // bitset<12> handleLabel(){}
-    // Label handling to be done later 
 
     public:
 
@@ -89,7 +102,7 @@ class SBType {
         
         opcodestr = opcode[index];
         funct3str = funct3[index];
-        bitset <12> immediate = 3072;//The label offset has been set to 0 for now
+        bitset <12> immediate(parameters[2]);//The label offset has been taken care of
         bitset <5> rs1(parameters[0]),rs2(parameters[1]);
 
         for(int i=0;i<7;i++)
