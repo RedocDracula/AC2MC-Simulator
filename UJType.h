@@ -63,11 +63,11 @@ bitset <32> UJType::decode (string instruction){
 	 	rdName.push_back(instruction[i]);
 		i++;
 	}
-	while(!isnum(instruction[i])){
+	while(!isdigit(instruction[i])){
 		if(	instruction[i] == '-') isNegative = true;
 		i++;
 	}
-	while(isnum(instruction[i])){
+	while(isdigit(instruction[i])){
 	 	labelOffset.push_back(instruction[i]);
 		i++;
 	}
@@ -96,8 +96,8 @@ bitset <32> UJType::decode (string instruction){
 		machineCode[7+i] = rd[i];
 	for(int i=0; i<8; i++)
 		machineCode[12+i] = imm[i+11];
-	machineCode[20] = imm[10]
-	machineCode[31] = imm[19]
+	machineCode[20] = imm[10];
+	machineCode[31] = imm[19];
 	for(int i=0; i<11; i++)
 		machineCode[21+i] = imm[i];
 	return machineCode;
