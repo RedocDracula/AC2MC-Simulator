@@ -46,9 +46,10 @@ bool UJType::isPresent(string inst){
 }
 
 bitset <32> UJType::decode (string instruction){
-	bitset <20> imm;	
 	bitset <32> machineCode;
-	string instName, rdName, label;
+	string instName, rdName, labelOffset;
+	int offset = 0;
+	bool isNegative = false;
 
 	// Splitting instruction into various parts, ignoring whitespaces and commas
 	int rdNum,i=0;
@@ -62,16 +63,17 @@ bitset <32> UJType::decode (string instruction){
 	 	rdName.push_back(instruction[i]);
 		i++;
 	}
-	while(!isalnum(instruction[i])) i++;
-	while(isalnum(instruction[i])){
-	 	label.push_back(instruction[i]);
+	while(!isnum(instruction[i])){
+		if(	instruction[i] == '-') isNegative = true;
+		i++;
+	}
+	while(isnum(instruction[i])){
+	 	labelOffset.push_back(instruction[i]);
 		i++;
 	}
 
 	// index for opcode
 	int index = find(instructions.begin(),instructions.end(),instName) - instructions.begin();
-	for(int i=0; i<7; i++)
-		machineCode[i]=opcode[index][6-i]-'0';
 
 	//Finding register number
 	if(rdName.size()==2)
@@ -80,10 +82,23 @@ bitset <32> UJType::decode (string instruction){
 		rdNum = 10*(rdName[1]-'0') + (rdName[2]-'0');
 	bitset <5> rd(rdNum);
 
+	//Finding offset
+	for(i=0; labelOffset[i] != '\0'; i++)
+		offset = offset*10 + (labelOffset[i] - '0');
+	if(isNegative)
+		offset *= -1;
+	bitset <20> imm(offset);
+
 	//Generating machine code
+	for(int i=0; i<7; i++)
+		machineCode[i]=opcode[index][6-i]-'0';
 	for(int i=0; i<5; i++)
 		machineCode[7+i] = rd[i];
-	for(int i=0; i<20; i++)
-		machineCode[12+i] = imm[i];
+	for(int i=0; i<8; i++)
+		machineCode[12+i] = imm[i+11];
+	machineCode[20] = imm[10]
+	machineCode[31] = imm[19]
+	for(int i=0; i<11; i++)
+		machineCode[21+i] = imm[i];
 	return machineCode;
 }
