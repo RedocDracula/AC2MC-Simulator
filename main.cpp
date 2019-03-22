@@ -9,6 +9,7 @@
 #include"SType.h"
 #include"UJType.h"
 #include"UType.h"
+#include"InterStateBuffers.h"
 
 using namespace std;
 
@@ -22,6 +23,8 @@ int main(){
   SType sTypeInsObj;
 	UJType ujTypeInsObj;
 	UType uTypeInsObj;
+
+	InterStateBuffers isb;
 
 	vector<string> labelNames;
 	vector<int> labelLineNumber;
@@ -76,6 +79,7 @@ int main(){
 					string newline;
 					for(int j=0;j<found;j++) newline.push_back(line[j]);
 					int offset = labelLineNumber[i] - lineNo -i;
+					offset *= 4; // Multiplying offset by 4
 					ostringstream numStr;
 					numStr << offset;
 					string intStr = numStr.str();
