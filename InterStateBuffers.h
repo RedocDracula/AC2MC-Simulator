@@ -34,7 +34,7 @@ class Register{
 
 class InterStateBuffers{
 	public:
-		Register RA, RB, RX, RY, RM;
+		Register RA, RB, RX, RY, RM, RZ;
 		
 		void resetAll(){
 			RA.reset();
@@ -42,6 +42,7 @@ class InterStateBuffers{
 			RX.reset();
 			RY.reset();
 			RM.reset();
+			RZ.reset();
 		}
 };
 	
