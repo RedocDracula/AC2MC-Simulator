@@ -1,6 +1,7 @@
 #include <iostream>
 #include <bitset>
-#define registerWidth 64
+#include <string>
+#define registerWidth 32
 
 class Register{
 	private:
@@ -35,7 +36,9 @@ class Register{
 class InterStateBuffers{
 	public:
 		Register RA, RB, RX, RY, RM, RZ;
-		
+		Register IR;
+		int insType;
+		string ALU_OP;		
 		void resetAll(){
 			RA.reset();
 			RB.reset();

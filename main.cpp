@@ -28,6 +28,8 @@ int main(){
 
 	vector<string> labelNames;
 	vector<int> labelLineNumber;
+
+	int insType;
 	
 	string inputFileName = "input.txt";
 	string outputFileName = "machineCode.txt";
@@ -87,17 +89,36 @@ int main(){
 				}
 			}
 		
-			if(rTypeInsObj.isPresent(line)) machineCode = rTypeInsObj.decode(line);
-			else if(iTypeInsObj.isPresent(line)) machineCode = iTypeInsObj.decode(line);
-			else if(sbTypeInsObj.isPresent(line)) machineCode = sbTypeInsObj.decode(line);
-			else if(sTypeInsObj.isPresent(line)) machineCode = sTypeInsObj.decode(line);
-			else if(ujTypeInsObj.isPresent(line)) machineCode = ujTypeInsObj.decode(line);
-			else if(uTypeInsObj.isPresent(line)) machineCode = uTypeInsObj.decode(line);
+			if(rTypeInsObj.isPresent(line)) {
+				machineCode = rTypeInsObj.decode(line);
+				insType = 1;
+			}
+			else if(iTypeInsObj.isPresent(line)) {
+				machineCode = iTypeInsObj.decode(line);
+				insType = 2;
+			}
+			else if(sbTypeInsObj.isPresent(line)) {
+				machineCode = sbTypeInsObj.decode(line);
+				insType = 3;
+			}
+			else if(sTypeInsObj.isPresent(line)) {
+				machineCode = sTypeInsObj.decode(line);
+				insType = 4;
+			}
+			else if(ujTypeInsObj.isPresent(line)) {
+				machineCode = ujTypeInsObj.decode(line);
+				insType = 5;
+			}
+			else if(uTypeInsObj.isPresent(line)) {
+				machineCode = uTypeInsObj.decode(line);
+				insType = 6;
+			}
 			else {
 				cout<<"!! Instuction not identified : "<<line<<endl;
 				machineCode = bitset<32>(0);
+				insType = -1;
 			}
-			oFile << machineCode << endl;
+			oFile << machineCode <<" "<< insType << endl;
 			oFile2 <<lineNo<<" "<< line << endl;
 		}
 		cout<<"Machine code file generated succesfully."<<endl;
