@@ -50,44 +50,14 @@ class InterStateBuffers{
 
 class ALU {
 
-    private:
-    vector <string> instructionName, relevantstr;  // here relevant str is  a string concatenated with funct7+funct3+opcode
-    
     public:
     bool state;
     int result;
 
-    void initialise() {
-        ifstream ifile("instructions_opcodes_ALU.txt");
-        string line,temp;
-        
-        while(getline(ifile,line))
-        {
-            stringstream ss(line);
-            ss >> temp; // temp now has the instruction name ex : add, sub etc,
-            instructionName.push_back(temp);
-            ss >> temp ; // temp now has the concatenated string. we'll use this to map to name of instruction
-            relevantstr.push_back(temp);
-        }
-
-        ifile.close();
-    }
 
 
-    void compute(bitset <32> funct7, bitset <32> funct3, bitset <32> opcode, InterStateBuffers &ISobject) {
+    void compute(InterStateBuffers &object) {
         
-        string relevant = funct7.to_string() + funct3.to_string() + opcode.to_string();
-        vector <string> :: iterator it = find(relevantstr.begin(), relevantstr.end(),relevant);
-        
-        if(it == relevantstr.end())
-        {
-            cout<<"ALU : Error instruction not found!";
-            return;
-        }
-        
-        int index = it - relevantstr.begin();
-        string ins = instructionName[index];
-
         if(ins == "add")
         {
             result =  ISobject.RA.readInt() + ISobject.RB.readInt();
