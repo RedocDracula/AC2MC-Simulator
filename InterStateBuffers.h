@@ -39,6 +39,7 @@ class InterStateBuffers{
 		Register RA, RB, RX, RY, RM, RZ;
 		int PC;
 		Register IR;
+		int pc_offset;
 		int insType;
 		string ALU_OP;		
 		void resetAll(){

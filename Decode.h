@@ -38,7 +38,7 @@ class Decode{
     int locA, locB, locC;
     bool hasFunc3 = true;
     bool hasFunc7 = true;
-    void decoder(InterStateBuffers &ibs, Registry_File regFile){
+    void decoder(InterStateBuffers &ibs, Registry_File &regFile){
         func3 = -1;
         func7 = -1;
         imm1 = -1;
@@ -117,6 +117,7 @@ class Decode{
         }
         if(insType == 4){
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
+            // rs1 replaced by rd to symbolize writing on that register, rs2 replaced by rs1 to leave room for writing
             for(int i=0;i<7;i++){
                 opcode[i] = IR[i];
             }
@@ -127,10 +128,10 @@ class Decode{
                 func3[i] = IR[12+i];
             }
             for(int i=0; i<5; i++){
-                rs1[i] = IR[15+i];
+                rd[i] = IR[15+i];
             }
             for(int i=0; i<5; i++){
-                rs2[i] = IR[20+i];
+                rs1[i] = IR[20+i];
             }
             for(int i=0; i<7; i++){
                 imm1[i+5] = IR[25+i];
@@ -178,10 +179,24 @@ class Decode{
         locC = rd.to_ulong();
 
         //Register file object will be passed and values will be read
+        // MUX B Implementation
         //Uncomment the following lines once the register file has been created and update the names.
         ibs.RA.writeInt(regFile.readInt(locA));
-        ibs.RB.writeInt(regFile.readInt(locB));
+        if(insType == 1 || insType ==3){
+            ibs.RB.writeInt(regFile.readInt(locB));
+        }
+        else if(insType == 2 || insType == 4){
+            ibs.RB.writeInt(imm1.to_ulong());
+        }
+        else if(insType == 5){
+            ibs.RB.writeInt(imm2.to_ulong());
+        }
+        else{
+            ibs.RB.writeInt(imm2.to_ulong());
+        }
 
+
+        //Concatenated opcode func3 and func7 and checked for ALU_OP
         string relStr;
         relStr = opcode.to_string();
         if(hasFunc3){
@@ -197,6 +212,7 @@ class Decode{
             relStr = relStr + "-1";
         }
 
+        //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
             if(relevantstr[i] == relStr){
                 ibs.ALU_OP = aluString[i];
@@ -204,9 +220,4 @@ class Decode{
         }
         
     }
-
-    //Function to concatenate opcode, func3 and func7
-
-
-
 };
