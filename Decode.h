@@ -1,4 +1,5 @@
 #include "InterStateBuffers.h"
+#include "RegistryFile.h"
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -35,7 +36,9 @@ class Decode{
     bitset<5> rs2;
     bitset<5> rd;
     int locA, locB, locC;
-    void decoder(InterStateBuffers &ibs){
+    bool hasFunc3 = true;
+    bool hasFunc7 = true;
+    void decoder(InterStateBuffers &ibs, Registry_File regFile){
         func3 = -1;
         func7 = -1;
         imm1 = -1;
@@ -84,6 +87,7 @@ class Decode{
             for(int i=0; i<12; i++){
                 imm1[i] = IR[20+i];
             }
+            hasFunc7 = false;
 
         }
         if(insType == 3){
@@ -109,6 +113,7 @@ class Decode{
                 imm1[i+4] = IR[25+i];
             }
             imm1[11] = IR[31];
+            hasFunc7 = false;
         }
         if(insType == 4){
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
@@ -130,6 +135,7 @@ class Decode{
             for(int i=0; i<7; i++){
                 imm1[i+5] = IR[25+i];
             }
+            hasFunc7 = false;
 
         }
         if(insType == 5){
@@ -148,6 +154,8 @@ class Decode{
                 imm2[i] = IR[21+i];
             }
             imm2[31] = IR[31];
+            hasFunc7 = false;
+            hasFunc3 = false;
         }
         if(insType == 6){
             // UType imm[31:12] | rd[11:7] | opcode[6:0]
@@ -160,6 +168,8 @@ class Decode{
             for(int i=0;i<20;i++){
                 imm2[i] = IR[12+i];
             }
+            hasFunc7 = false;
+            hasFunc3 = false;
         }
 
         // Also add the same to the register files once made
@@ -169,9 +179,30 @@ class Decode{
 
         //Register file object will be passed and values will be read
         //Uncomment the following lines once the register file has been created and update the names.
-        //ibs.RA.writeBitset(regFile.readValue(locA));
-        //ibs.RB.writeBitset(regFile.readValue(locB));
+        ibs.RA.writeInt(regFile.readInt(locA));
+        ibs.RB.writeInt(regFile.readInt(locB));
 
+        string relStr;
+        relStr = opcode.to_string();
+        if(hasFunc3){
+            relStr = relStr + func3.to_string(); 
+            if(hasFunc7){
+                relStr = relStr + func7.to_string();
+            }
+            else{
+                relStr = relStr + "-1";
+            }
+        }
+        else{
+            relStr = relStr + "-1";
+        }
+
+        for(int i=0;i<instructionName.size(); i++){
+            if(relevantstr[i] == relStr){
+                ibs.ALU_OP = aluString[i];
+            }
+        }
+        
     }
 
     //Function to concatenate opcode, func3 and func7
