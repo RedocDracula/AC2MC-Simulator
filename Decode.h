@@ -195,16 +195,24 @@ class Decode{
         else if(insType == 2 || insType == 4){
             ibs.RB.writeInt(imm1.to_ulong());
         }
-        else if(insType == 5){
+        else if(insType == 6){
             ibs.RB.writeInt(imm2.to_ulong());
         }
-        else{
-            ibs.RB.writeInt(imm2.to_ulong());
+
+        if(insType==3){
+            ibs.pc_offset = imm1.to_ulong();
+        }
+        if(insType==5){
+            ibs.pc_offset = imm2.to_ulong();
         }
 
         cout<<"Location A: "<<locA<<endl;
         cout<<"Location B: "<<locB<<endl;
         cout<<"Destination: "<<locC<<endl;
+
+        cout<<"Value A: "<<ibs.RA.readInt()<<endl;
+        cout<<"Value B: "<<ibs.RB.readInt()<<endl;
+        cout<<"PC offset: "<<ibs.pc_offset<<endl;
 
 
         //Concatenated opcode func3 and func7 and checked for ALU_OP

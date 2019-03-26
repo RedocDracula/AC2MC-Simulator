@@ -8,12 +8,12 @@ int main(){
     Registry_File regFile;
     Decode dec;
     dec.initialise();
-    string instStr = "00000000010000010000000100010011";
+    string instStr = "00000000001100010000001101100011";
 
     bitset<32> inst(instStr);
 
     buf.IR.writeBitset(inst);
-    buf.insType = 2;
+    buf.insType = 3;
 
     dec.decoder(buf, regFile);
 
