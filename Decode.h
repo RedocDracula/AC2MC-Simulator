@@ -10,7 +10,7 @@ class Decode{
 
     public:
     void initialise() {
-        ifstream ifile("ALU.txt");
+        ifstream ifile("../ALU.txt");
         string line,temp;
         
         while(getline(ifile,line))
@@ -23,6 +23,9 @@ class Decode{
             ss >> temp ; // temp now has the concatenated string. we'll use this to map to name of instruction
             relevantstr.push_back(temp);
         }
+
+        // Test code
+        cout<<"Read "<<relevantstr.size()<<" objects"<<endl;
 
         ifile.close();
     }
@@ -38,6 +41,7 @@ class Decode{
     int locA, locB, locC;
     bool hasFunc3 = true;
     bool hasFunc7 = true;
+    //actual decoder
     void decoder(InterStateBuffers &ibs, Registry_File &regFile){
         func3 = -1;
         func7 = -1;
@@ -48,6 +52,9 @@ class Decode{
         rd = 0;
         int insType = ibs.insType;
         bitset<32> IR(ibs.IR.readInt());
+
+        //Tester
+        cout<<"Instruction type: "<<insType<<endl;
 
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
@@ -195,6 +202,10 @@ class Decode{
             ibs.RB.writeInt(imm2.to_ulong());
         }
 
+        cout<<"Location A: "<<locA<<endl;
+        cout<<"Location B: "<<locB<<endl;
+        cout<<"Destination: "<<locC<<endl;
+
 
         //Concatenated opcode func3 and func7 and checked for ALU_OP
         string relStr;
@@ -212,10 +223,14 @@ class Decode{
             relStr = relStr + "-1";
         }
 
+        //Tester
+        cout<<"ALU String: "<<relStr<<endl;
+
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
             if(relevantstr[i] == relStr){
                 ibs.ALU_OP = aluString[i];
+                cout<<"ALU OP: "<<aluString[i]<<endl;
             }
         }
         
