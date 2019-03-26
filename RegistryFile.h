@@ -22,7 +22,7 @@ public:
 		return registers[index].to_ulong();
 	}
 
-	void writeBits (int index , int value) {
+	void writeBits (int index , bitset <32> value) {
 		registers[index] = value;		
 	}
 
