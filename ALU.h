@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "InterStateBuffers"
+#include "InterStateBuffers.h"
 
 using namespace std;
 
@@ -71,11 +71,23 @@ class ALU {
 		else if(ins == "bgtu"){
 			state = (RAU > RBU) ? 1 : 0;
 		}
+		else if (ins == "sra"){ //arithmetic shift
+			int shift = RB;
+			bitset <32> finalresult = RA;
+			int size = finalresult.size();
+			int MSB = finalresult[size - 1];
+			finalresult >> shift;
+			for(int index = size - shift; index < size ; index++ )
+			{
+				finalresult[index] = MSB;
+			}
+			object.RZ.writeInt(finalresult.to_ulong());
+		}
+		else{
+			cout<<"Sorry instruction not found ! "<<endl;
+		}
 		
-
     }
 
     
 };
-
-
