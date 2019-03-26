@@ -2,6 +2,7 @@
 #include <bitset>
 #include <string>
 #define registerWidth 32
+using namespace std;
 
 class Register{
 	private:
@@ -36,6 +37,7 @@ class Register{
 class InterStateBuffers{
 	public:
 		Register RA, RB, RX, RY, RM, RZ;
+		int PC;
 		Register IR;
 		int insType;
 		string ALU_OP;		
