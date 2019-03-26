@@ -6,16 +6,18 @@ using namespace std;
 
 
 class ALU {
+	
 	private:
 	int RA,RB;
 	unsigned RAU,RBU;
-    public:
-    bool state;
-    int result;
+	
+	public:
+	bool state;
+	int result;
 
     void compute(InterStateBuffers &object) 
     {
-        string ins = object.ALU_OP;
+        	string ins = object.ALU_OP;
 		RA = object.RA.readInt(); // reading both values before hand
 		RB = object.RB.readInt();
 		RAU = object.RA.readInt(); // reading both values before hand
