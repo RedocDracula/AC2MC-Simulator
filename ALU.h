@@ -1,10 +1,9 @@
 #pragma once
-#include <bits/stdc++.h>
-
 #include <bitset>
 #include <iostream>
 #include <fstream>
-#include "InterStateBuffers.h"
+#include <string>
+
 
 using namespace std;
 
@@ -75,6 +74,9 @@ class ALU {
 		}
 		else if(ins == "beq"){
 			state = RA == RB ? 1 : 0;
+		}
+	    	else if(ins == "bne"){
+			state = RA != RB ? 1 : 0;
 		}
 		else if(ins == "bgtu"){
 			state = (RAU > RBU) ? 1 : 0;
