@@ -38,12 +38,17 @@ class InterStateBuffers{
 	public:
 		Register RA, RB, RX, RY, RM, RZ;
 		int PC;
+		int mem_register, return_address;
 		Register IR;
 		int pc_offset;
 		int insType;
 		string ALU_OP;
 		bool isjalr;
 		int write_back_location;		
+		void initialise(){
+			PC = 0;
+			return_address = 0;
+		}
 		void resetAll(){
 			RA.reset();
 			RB.reset();

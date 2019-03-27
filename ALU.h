@@ -1,6 +1,10 @@
 #pragma once
 #include <bits/stdc++.h>
 
+#include <bitset>
+#include <iostream>
+#include <fstream>
+#include "InterStateBuffers.h"
 
 using namespace std;
 
@@ -50,7 +54,7 @@ class ALU {
 			result = RA << RB ;
 			object.RZ.writeInt(result);
 		}
-		else if(ins == "slr"){
+		else if(ins == "srl"){
 			result = RA >> RB;
 			object.RZ.writeInt(result);
 		}
