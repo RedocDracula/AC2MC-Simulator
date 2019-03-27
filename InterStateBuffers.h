@@ -22,10 +22,7 @@ class Register{
 		}
 
 		void writeBitset(bitset <registerWidth> x){
-			cout<<" BUFFER INPUT : "<<x<<"$$"<<endl;
-			cout<<" BUFFER WRITTEN WITH VALUE : "<<x.to_ulong()<<"$$"<<endl;
 			value = x.to_ulong();
-			cout<<" BUFFER WRITTEN WITH VALUE : "<<value<<"$$"<<endl;
 		}
 		
 		int readInt(){
@@ -54,6 +51,7 @@ class InterStateBuffers{
 		InterStateBuffers(){
 			PC = 1;
 			return_address = 1;
+			isjalr = false;
 		}
 		void resetAll(){
 			RA.reset();

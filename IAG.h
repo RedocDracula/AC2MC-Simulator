@@ -12,7 +12,10 @@ class IAG{
 			if(isb.isjalr == true){
 				isb.PC = isb.RZ.readInt();
 			}
-			else if(isb.insType == 3 || isb.insType == 5){
+			else if(isb.insType == 5){
+				isb.PC = isb.PC + isb.pc_offset;
+			}
+			else if(isb.insType == 3 && alu.state == true){
 				isb.PC = isb.PC + isb.pc_offset;
 			}
 			else{

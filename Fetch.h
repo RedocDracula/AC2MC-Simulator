@@ -29,8 +29,7 @@ class Fetch {
 			string lineNo, command , type;
 			stringstream ss (line);
 			ss >> lineNo >> command >> type;
-			bitset<REG_WIDTH> bitset(atoi(command.c_str()));
-			cout<<"##### LINE NO:"<<atol(lineNo.c_str())<<endl;
+			bitset<REG_WIDTH> bitset(command.c_str());
 			mem_map[atoi(lineNo.c_str())] = bitset;
 			itype_map[atoi(lineNo.c_str())] = atoi (type.c_str());
 		}
@@ -39,7 +38,7 @@ class Fetch {
 	
 	
 	void get(InterStateBuffers & buf) {
-		cout<<" $$$$$$ "<<mem_map[buf.PC]<<endl;
+	//	cout<<" $$$$$$ "<<mem_map[buf.PC]<<endl;
 		buf.IR.writeBitset ( mem_map[buf.PC]);
 		buf.insType = itype_map[ buf.PC ];
 		

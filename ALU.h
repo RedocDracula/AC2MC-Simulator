@@ -95,7 +95,7 @@ class ALU {
 			object.RZ.writeInt(finalresult.to_ulong());
 		}
 		else{
-			cout<<"Sorry instruction not found ! "<<endl;
+			cout<<"Sorry instruction "<<ins<< " not found ! "<<endl;
 		}
 		
     }

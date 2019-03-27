@@ -247,7 +247,6 @@ class Decode{
 
         //Tester
         cout<<"ALU String: "<<relStr<<endl;
-
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
             if(relevantstr[i] == relStr){

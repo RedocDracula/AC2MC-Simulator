@@ -31,9 +31,6 @@ int main(){
 	UJType ujTypeInsObj;
 	UType uTypeInsObj;
 
-	Fetch fetch;
-	IAG iag;
-
 	InterStateBuffers isb;
 
 	vector<string> labelNames;
@@ -91,7 +88,7 @@ int main(){
 					string newline;
 					for(int j=0;j<found;j++) newline.push_back(line[j]);
 					int offset = labelLineNumber[i] - lineNo -i;
-					offset *= 4; // Multiplying offset by 4
+				//	offset *= 4; // Multiplying offset by 4
 					ostringstream numStr;
 					numStr << offset;
 					string intStr = numStr.str();
@@ -131,19 +128,34 @@ int main(){
 			oFile <<lineNo<<" "<< machineCode <<" "<< insType << endl;
 			oFile2 <<lineNo<<" "<< line << endl;
 		}
+		oFile<<lineNo+1<<" 0 0"<<endl;
 		cout<<"Machine code file generated succesfully."<<endl;
 	}
-
-	// Control
-	for(int i=0; i<3; i++){
-		fetch.get(isb);
-		// cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-		iag.step(isb);
-	}
-	
 	iFile.close();
 	oFile.close();
 	oFile2.close();
+
+	Registry_File rFile;
+	Fetch fetch;
+	Decode decode;
+	ALU alu;
+	IAG iag;
+
+	decode.initialise();
+
+	// Control
+	while(1){
+		fetch.get(isb);
+		if(isb.IR.readInt() == 0)
+			break;
+//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		decode.decoder(isb,rFile);
+		alu.compute(isb);
+		cout<<" RZ : "<<isb.RZ.readInt()<<endl;
+		iag.step(isb);
+	}
+	
+
 	return 0;
 }
 
