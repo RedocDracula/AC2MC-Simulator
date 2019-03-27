@@ -1,7 +1,3 @@
 addi x1,x0,3
-addi x2,x0,5
-bne x0,x0,Label
-addi x1,x0,7
-addi x1,x0,9
-Label:
-addi x1,x0,11
+addi x5,x0,10
+sd x1 0(x5)
