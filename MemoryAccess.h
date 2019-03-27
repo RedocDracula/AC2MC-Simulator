@@ -20,12 +20,12 @@ private:
 public:
 	MemoryAccess();
 	
-	void writeMem( int value , int address) {
-		MEM[address] = value;
+	void writeMem(InterStateBuffers &isb) {
+		MEM[isb.RZ.readInt()] = isb.RM.readInt();
 	}
 
-	int readMem (int address ) {
-		return MEM[address];
+	void readMem (InterStateBuffers &ibf) {
+		ibf.mem_register = MEM[ibf.RZ.readInt()];
 	}
 }; 
 

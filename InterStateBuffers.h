@@ -44,7 +44,7 @@ class InterStateBuffers{
 		int pc_offset;
 		int insType;
 		string ALU_OP;
-		bool isjalr;
+		bool isjalr, isMem;
 
 		//Write back location:- stores register number for writeback, -1 for SB type where no write back occurs.
 		int write_back_location;
@@ -52,6 +52,7 @@ class InterStateBuffers{
 			PC = 1;
 			return_address = 1;
 			isjalr = false;
+			isMem = false;
 		}
 		void resetAll(){
 			RA.reset();

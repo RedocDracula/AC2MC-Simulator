@@ -11,7 +11,7 @@ class Decode{
 
     public:
     void initialise() {
-        ifstream ifile("../ALU.txt");
+        ifstream ifile("ALU.txt");
         string line,temp;
         
         while(getline(ifile,line))
@@ -257,6 +257,13 @@ class Decode{
                 else{
                     ibs.isjalr = false;
                 }
+
+								if(instructions[i] == "lb" || instructions[i] == "lw" || instructions[i] == "lh" || instructions[i] == "ld" || instructions[i] == "lbu" || instructions[i] == "lhu" ||instructions[i] == "lwu" ||  ibs.insType == 4){
+											isb.isMem = true;
+									}
+									else{
+											isb.isMem = false;									
+								}
                 cout<<"ALU OP: "<<aluString[i]<<endl;
             }
         }

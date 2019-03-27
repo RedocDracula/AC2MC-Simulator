@@ -16,6 +16,7 @@
 #include"MUX_Y.h"
 #include"RegistryFile.h"
 #include"RegUpdate.h"
+#include"MemoryAccess.h"
 #include"InterStateBuffers.h"
 
 using namespace std;
@@ -137,9 +138,13 @@ int main(){
 
 	Registry_File rFile;
 	Fetch fetch;
+	MUX_Y muxy;
 	Decode decode;
+	MemoryAccess memAccess;
+	RegistryUpdate regUpdate;
 	ALU alu;
 	IAG iag;
+	
 
 	decode.initialise();
 
@@ -151,8 +156,24 @@ int main(){
 //		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
 		decode.decoder(isb,rFile);
 		alu.compute(isb);
-		cout<<" RZ : "<<isb.RZ.readInt()<<endl;
-		iag.step(isb);
+		if(isb.isMem == true){
+				if(isb.insType == 4){
+					memAccess.writeMem(isb);
+					muxy.MUX_Y_SELECT = 1;
+				}
+				else {
+					memAccess.readMem(isb);
+					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
+
+				}
+		}
+		else
+			muxy.MUX_Y_SELECT = 1;
+		
+		isb.RY = muxy.output(isb);
+		
+		
+		iag.step(isb,alu);
 	}
 	
 
