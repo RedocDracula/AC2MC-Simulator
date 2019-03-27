@@ -17,10 +17,11 @@ class IType {
     vector <string> funct3;
     
     /* Function extracts the all the integers in an instruction basically */
-    /* for ex : sw x2,24(x3) : will extract 2,24,3 i.e parameters needed for MC generation.*/
+    /* for ex : lw x2,42(x3) : will extract 2,24,3 i.e parameters needed for MC generation.*/
     vector <int> extractint(string str) { // recieves a string and extracts all the integers and returns them in a list (vector)
         vector <int> result;
         int sum,currentint;
+        
         for(int strIndex = 0 ; strIndex < str.size() ; strIndex++) {
             
             sum = 0;
@@ -75,6 +76,7 @@ class IType {
 		/*Edit this*/
         bitset <32> MachineCode;
         stringstream ss(instruction); //helpful for tokenizing space separated strings.
+        string insname;
         vector <int> parameters = extractint(instruction); // extracted all register names, offsets etc.
         string action;
         ss >> action;
@@ -84,8 +86,21 @@ class IType {
         opcodestr = opcode[index];
         funct3str = funct3[index];
 
-        bitset <12> immediate(parameters[2]); // loading offset
-        bitset <5> rd(parameters[0]),rs1(parameters[1]);
+        bitset <12> immediate; // loading offset
+        bitset <5> rd, rs1;
+
+
+        if(action[0] == 'l' || action[0] == 'j')
+        {
+            immediate = parameters[1];
+            rd = parameters[0];
+            rs1 = parameters[2];
+        }
+        else{
+        immediate= (parameters[2]); // loading offset
+          rd = (parameters[0]);
+          rs1 = (parameters[1]);
+        }
 
         for(int i=0;i<7;i++) {
             MachineCode[i] = (opcodestr[opcodestr.size()-1-i] == '0') ? 0 : 1; //copying opcode string to the opcode field
