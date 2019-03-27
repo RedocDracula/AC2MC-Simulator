@@ -1,5 +1,4 @@
-// Read PC and fill Instruction Registers
- 
+#pragma once
 #include "InterStateBuffers.h"
 
 #include <bitset>
@@ -14,7 +13,7 @@
 using namespace std;
 
 //Change Here, Global Interstate Buffer ka object
-extern InterStateBuffers buf;
+// extern InterStateBuffers buf;
 
 class Fetch {
 	
@@ -37,7 +36,7 @@ class Fetch {
 	}
 	
 	
-	void get() {
+	void get(InterStateBuffers & buf) {
 		buf.IR.writeBitset ( mem_map[buf.PC]);
 		buf.insType = itype_map[ buf.PC ];
 	}

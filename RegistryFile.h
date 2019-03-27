@@ -1,3 +1,5 @@
+#pragma once
+
 #include <bitset>
 #include <vector>
 #define REG_WIDTH 32
