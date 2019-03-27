@@ -8,9 +8,9 @@ class IAG{
 	public:
 		
 		void step(InterStateBuffers &isb){
-			isb.return_address = isb.PC+4;
+			isb.return_address = isb.PC+1;
 			if(isb.isjalr == true){
-				isb.PC = isb.RZ;
+				isb.PC = isb.RZ.readInt();
 			}
 			else if(isb.insType == 3 || isb.insType == 5){
 				isb.PC = isb.PC + isb.pc_offset;
@@ -20,4 +20,4 @@ class IAG{
 			}
 			return;
 		}
-}
+};

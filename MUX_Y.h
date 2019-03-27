@@ -22,5 +22,4 @@ class MUX_Y{
             cout<<" the MUX_Y_SELECT IS SET WRONG!"<<endl;
         }
     }
-
-}
+};

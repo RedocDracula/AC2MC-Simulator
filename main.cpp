@@ -31,6 +31,9 @@ int main(){
 	UJType ujTypeInsObj;
 	UType uTypeInsObj;
 
+	Fetch fetch;
+	IAG iag;
+
 	InterStateBuffers isb;
 
 	vector<string> labelNames;
@@ -130,6 +133,13 @@ int main(){
 		}
 		cout<<"Machine code file generated succesfully."<<endl;
 	}
+
+	// Control
+	for(int i=0; i<3; i++){
+		fetch.get(isb);
+		// cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		iag.step(isb);
+	}
 	
 	iFile.close();
 	oFile.close();
@@ -152,7 +162,7 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 				while(line[i]!=':' && i<line.size()) labelName.push_back(line[i++]);
 				labelNames.push_back(labelName);
 				labelLineNumber.push_back(lineNo);
-				cout<<"Label found : "<<labelName<<" at line no. "<<lineNo<<endl;
+			//	cout<<"Label found : "<<labelName<<" at line no. "<<lineNo<<endl;
 			}
 		}
 	}

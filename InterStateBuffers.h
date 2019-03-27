@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <bitset>
 #include <string>
@@ -21,7 +22,10 @@ class Register{
 		}
 
 		void writeBitset(bitset <registerWidth> x){
+			cout<<" BUFFER INPUT : "<<x<<"$$"<<endl;
+			cout<<" BUFFER WRITTEN WITH VALUE : "<<x.to_ulong()<<"$$"<<endl;
 			value = x.to_ulong();
+			cout<<" BUFFER WRITTEN WITH VALUE : "<<value<<"$$"<<endl;
 		}
 		
 		int readInt(){
@@ -47,9 +51,9 @@ class InterStateBuffers{
 
 		//Write back location:- stores register number for writeback, -1 for SB type where no write back occurs.
 		int write_back_location;
-		void initialise(){
-			PC = 0;
-			return_address = 0;
+		InterStateBuffers(){
+			PC = 1;
+			return_address = 1;
 		}
 		void resetAll(){
 			RA.reset();
