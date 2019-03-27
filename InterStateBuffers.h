@@ -42,7 +42,8 @@ class InterStateBuffers{
 		int pc_offset;
 		int insType;
 		string ALU_OP;
-		bool isjalr;		
+		bool isjalr;
+		int write_back_location;		
 		void resetAll(){
 			RA.reset();
 			RB.reset();

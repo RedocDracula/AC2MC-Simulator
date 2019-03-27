@@ -1,3 +1,4 @@
+#pragma once
 #include "InterStateBuffers.h"
 #include "RegistryFile.h"
 #include <bits/stdc++.h>

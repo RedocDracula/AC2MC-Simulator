@@ -1,5 +1,6 @@
+#pragma once
 #include <bits/stdc++.h>
-#include "InterStateBuffers.h"
+
 
 using namespace std;
 
@@ -67,6 +68,9 @@ class ALU {
 		}
 		else if(ins == "bltu"){
 			state = (RAU < RBU) ? 1 : 0;
+		}
+		else if(ins == "beq"){
+			state = RA == RB ? 1 : 0;
 		}
 		else if(ins == "bgtu"){
 			state = (RAU > RBU) ? 1 : 0;
