@@ -43,7 +43,10 @@ class InterStateBuffers{
 		int pc_offset;
 		int insType;
 		string ALU_OP;
-		bool isjalr;	
+		bool isjalr;
+
+		//Write back location:- stores register number for writeback, -1 for SB type where no write back occurs.
+		int write_back_location;
 		void initialise(){
 			PC = 0;
 			return_address = 0;

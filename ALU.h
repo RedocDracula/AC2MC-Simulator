@@ -1,5 +1,9 @@
-#include <bits/stdc++.h>
-#include "InterStateBuffers.h"
+#pragma once
+#include <bitset>
+#include <iostream>
+#include <fstream>
+#include <string>
+
 
 using namespace std;
 
@@ -49,7 +53,7 @@ class ALU {
 			result = RA << RB ;
 			object.RZ.writeInt(result);
 		}
-		else if(ins == "slr"){
+		else if(ins == "srl"){
 			result = RA >> RB;
 			object.RZ.writeInt(result);
 		}
@@ -67,6 +71,12 @@ class ALU {
 		}
 		else if(ins == "bltu"){
 			state = (RAU < RBU) ? 1 : 0;
+		}
+		else if(ins == "beq"){
+			state = RA == RB ? 1 : 0;
+		}
+	    	else if(ins == "bne"){
+			state = RA != RB ? 1 : 0;
 		}
 		else if(ins == "bgtu"){
 			state = (RAU > RBU) ? 1 : 0;

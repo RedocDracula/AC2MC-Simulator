@@ -9,6 +9,13 @@
 #include"SType.h"
 #include"UJType.h"
 #include"UType.h"
+#include"ALU.h"
+#include"IAG.h"
+#include"Decode.h"
+#include"Fetch.h"
+#include"MUX_Y.h"
+#include"RegistryFile.h"
+#include"RegUpdate.h"
 #include"InterStateBuffers.h"
 
 using namespace std;
