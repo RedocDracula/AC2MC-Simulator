@@ -118,7 +118,7 @@ int main(){
 				machineCode = bitset<32>(0);
 				insType = -1;
 			}
-			oFile << machineCode <<" "<< insType << endl;
+			oFile <<lineNo<<" "<< machineCode <<" "<< insType << endl;
 			oFile2 <<lineNo<<" "<< line << endl;
 		}
 		cout<<"Machine code file generated succesfully."<<endl;
