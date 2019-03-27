@@ -41,7 +41,8 @@ class InterStateBuffers{
 		Register IR;
 		int pc_offset;
 		int insType;
-		string ALU_OP;		
+		string ALU_OP;
+		bool isjalr;		
 		void resetAll(){
 			RA.reset();
 			RB.reset();
