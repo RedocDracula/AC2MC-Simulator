@@ -1,5 +1,4 @@
-// Read PC and fill Instruction Registers
- 
+#pragma once
 #include "InterStateBuffers.h"
 
 #include <bitset>
