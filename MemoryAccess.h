@@ -1,5 +1,8 @@
 #pragma once 
 
+#include "InterStateBuffers.h"
+#include "MUX_Y.h"
+
 #include <bitset>
 #include <map>
 #include <fstream>
@@ -8,33 +11,21 @@
 using namespace std;
 #define MEM_SRC "a"
 #define MAX_MEM int(1e6)
+
 class  MemoryAccess {
 private:
-	fstream file;
+	
+	map <int , int > MEM;
 	
 public:
-	MemoryAccess() {
-		file.open(MEM_SRC,ios::out);
-		for (int i =0;i<MAX_MEM ; i++) {
-			file << i*4 << "0 \n";	
-		}
-		file.close();
-	}
+	MemoryAccess();
 	
 	void writeMem( int value , int address) {
-		file.open(MEM_SRC, ios::);
-		// while(getline() ){
-		// 	//
-
-		// }
-		file.close();
+		MEM[address] = value;
 	}
 
 	int readMem (int address ) {
-		// while(getline()){
-			
-		// }
-		return 0;
+		return MEM[address];
 	}
 }; 
 
