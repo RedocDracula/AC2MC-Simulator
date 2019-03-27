@@ -92,7 +92,7 @@ class RType {
 
         
         //Settting up RS1 , RS2  , RD
-        bitset <5> rs2(parameters[1]),rs1(parameters[2]);
+        bitset <5> rs2(parameters[2]),rs1(parameters[1]);
         bitset <5> rd (parameters[0]);
         
         for(int i=0;i<7;i++) {
