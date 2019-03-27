@@ -53,7 +53,6 @@ int main(){
 	ujTypeInsObj.initialise(dir + "UJType.txt");
 	uTypeInsObj.initialise(dir + "UType.txt");
 
-	cout<<"All object initialised succesfully."<<endl;
 
 	//Find All Labels in the input file
 	findLabels(inputFileName,labelNames,labelLineNumber);	
@@ -182,6 +181,7 @@ int main(){
 		iag.step(isb,alu);
 	}
 	
+	cout<<"Code executed succesfully."<<endl;
 
 	return 0;
 }
