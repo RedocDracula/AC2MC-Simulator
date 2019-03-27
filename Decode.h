@@ -130,7 +130,7 @@ class Decode{
         }
         if(insType == 4){
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
-            // rs1 replaced by rd to symbolize writing on that register, rs2 replaced by rs1 to leave room for writing
+            // rs1 replaced by rd to symbolize reading on that register, rs2 replaced by rs1 to leave room for writing
             for(int i=0;i<7;i++){
                 opcode[i] = IR[i];
             }
@@ -151,7 +151,7 @@ class Decode{
             }
             hasFunc7 = false;
 
-            ibs.write_back_location = rd.to_ulong();
+            ibs.write_back_location = -1 ;
         }
         if(insType == 5){
             // UJType imm[20][10:1][11][19:12] | rd[11:7] | opcode[6:0]	
@@ -220,6 +220,10 @@ class Decode{
             ibs.pc_offset = 0;
         }
 
+        if(insType == 4){
+            ibs.RM.writeInt(regFile.readInt(locC));
+        }
+
         cout<<"Location A: "<<locA<<endl;
         cout<<"Location B: "<<locB<<endl;
         cout<<"Destination: "<<locC<<endl;
@@ -247,6 +251,7 @@ class Decode{
 
         //Tester
         cout<<"ALU String: "<<relStr<<endl;
+
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
             if(relevantstr[i] == relStr){
