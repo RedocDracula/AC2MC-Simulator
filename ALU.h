@@ -1,4 +1,7 @@
-#include <bits/stdc++.h>
+#pragma once
+#include <bitset>
+#include <iostream>
+#include <fstream>
 #include "InterStateBuffers.h"
 
 using namespace std;
