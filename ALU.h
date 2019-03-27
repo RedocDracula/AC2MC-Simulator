@@ -49,7 +49,7 @@ class ALU {
 			result = RA << RB ;
 			object.RZ.writeInt(result);
 		}
-		else if(ins == "slr"){
+		else if(ins == "srl"){
 			result = RA >> RB;
 			object.RZ.writeInt(result);
 		}
