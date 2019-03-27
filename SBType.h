@@ -53,10 +53,6 @@ class SBType {
                 result.push_back(sum2);
         }
 
-        for(int i=0;i<3;i++){
-            cout<<result[i]<<' ';
-        }
-        cout<<endl;
         return result; //returning vector of extracted parameters
     }
 
