@@ -77,6 +77,8 @@ class Decode{
             for(int i=0; i<7; i++){
                 func7[i] = IR[25+i];
             }
+
+            ibs.write_back_location = rd.to_ulong();
         } 
         if(insType == 2){
             // IType 0->31 | opcode (7) | rd (5) | funct3 | rs1(5) | immediate(12) |
@@ -97,6 +99,7 @@ class Decode{
             }
             hasFunc7 = false;
 
+            ibs.write_back_location = rd.to_ulong();
         }
         if(insType == 3){
             // SBType imm[12] | imm [10:5] | rs2 | rs1 | funct3 | imm[4:1] | imm[11] | opcode
@@ -122,6 +125,8 @@ class Decode{
             }
             imm1[11] = IR[31];
             hasFunc7 = false;
+
+            ibs.write_back_location = -1;
         }
         if(insType == 4){
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
@@ -146,6 +151,7 @@ class Decode{
             }
             hasFunc7 = false;
 
+            ibs.write_back_location = rd.to_ulong();
         }
         if(insType == 5){
             // UJType imm[20][10:1][11][19:12] | rd[11:7] | opcode[6:0]	
@@ -165,6 +171,8 @@ class Decode{
             imm2[31] = IR[31];
             hasFunc7 = false;
             hasFunc3 = false;
+
+            ibs.write_back_location = rd.to_ulong();
         }
         if(insType == 6){
             // UType imm[31:12] | rd[11:7] | opcode[6:0]
@@ -179,6 +187,8 @@ class Decode{
             }
             hasFunc7 = false;
             hasFunc3 = false;
+
+            ibs.write_back_location = rd.to_ulong();
         }
 
         // Also add the same to the register files once made
@@ -203,8 +213,11 @@ class Decode{
         if(insType==3){
             ibs.pc_offset = imm1.to_ulong();
         }
-        if(insType==5){
+        else if(insType==5){
             ibs.pc_offset = imm2.to_ulong();
+        }
+        else{
+            ibs.pc_offset = 0;
         }
 
         cout<<"Location A: "<<locA<<endl;
