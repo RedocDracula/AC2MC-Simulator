@@ -141,7 +141,7 @@ int main(){
 	MUX_Y muxy;
 	Decode decode;
 	MemoryAccess memAccess;
-	RegistryUpdate regUpdate;
+	RegUpdate regUpdate;
 	ALU alu;
 	IAG iag;
 	
@@ -167,11 +167,17 @@ int main(){
 
 				}
 		}
+		else if(isb.isjalr == true || isb.insType == 5){
+			muxy.MUX_Y_SELECT = 3;
+		}
 		else
 			muxy.MUX_Y_SELECT = 1;
 		
-		isb.RY = muxy.output(isb);
+		isb.RY.writeInt(muxy.output(isb));
 		
+		if(isb.write_back_location != -1){
+			regUpdate.update(isb,rFile, isb.write_back_location);
+		}
 		
 		iag.step(isb,alu);
 	}

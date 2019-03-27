@@ -263,11 +263,11 @@ class Decode{
                     ibs.isjalr = false;
                 }
 
-								if(instructions[i] == "lb" || instructions[i] == "lw" || instructions[i] == "lh" || instructions[i] == "ld" || instructions[i] == "lbu" || instructions[i] == "lhu" ||instructions[i] == "lwu" ||  ibs.insType == 4){
-											isb.isMem = true;
+								if(instructionName[i] == "lb" || instructionName[i] == "lw" || instructionName[i] == "lh" || instructionName[i] == "ld" || instructionName[i] == "lbu" || instructionName[i] == "lhu" ||instructionName[i] == "lwu" ||  ibs.insType == 4){
+											ibs.isMem = true;
 									}
 									else{
-											isb.isMem = false;									
+											ibs.isMem = false;									
 								}
                 cout<<"ALU OP: "<<aluString[i]<<endl;
             }
