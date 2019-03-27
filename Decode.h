@@ -238,6 +238,12 @@ class Decode{
         for(int i=0;i<instructionName.size(); i++){
             if(relevantstr[i] == relStr){
                 ibs.ALU_OP = aluString[i];
+                if(instructionName[i]== "jalr"){
+                    ibs.isjalr = true;
+                }
+                else{
+                    ibs.isjalr = false;
+                }
                 cout<<"ALU OP: "<<aluString[i]<<endl;
             }
         }
