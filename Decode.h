@@ -25,9 +25,6 @@ class Decode{
             relevantstr.push_back(temp);
         }
 
-        // Test code
-        cout<<"Read "<<relevantstr.size()<<" objects"<<endl;
-
         ifile.close();
     }
 
@@ -54,8 +51,6 @@ class Decode{
         int insType = ibs.insType;
         bitset<32> IR(ibs.IR.readInt());
 
-        //Tester
-        cout<<"Instruction type: "<<insType<<endl;
 
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
@@ -224,14 +219,6 @@ class Decode{
             ibs.RM.writeInt(regFile.readInt(locC));
         }
 
-        cout<<"Location A: "<<locA<<endl;
-        cout<<"Location B: "<<locB<<endl;
-        cout<<"Destination: "<<locC<<endl;
-
-        cout<<"Value A: "<<ibs.RA.readInt()<<endl;
-        cout<<"Value B: "<<ibs.RB.readInt()<<endl;
-        cout<<"PC offset: "<<ibs.pc_offset<<endl;
-
 
         //Concatenated opcode func3 and func7 and checked for ALU_OP
         string relStr;
@@ -249,8 +236,6 @@ class Decode{
             relStr = relStr + "-1";
         }
 
-        //Tester
-        cout<<"ALU String: "<<relStr<<endl;
 
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
@@ -263,13 +248,12 @@ class Decode{
                     ibs.isjalr = false;
                 }
 
-								if(instructionName[i] == "lb" || instructionName[i] == "lw" || instructionName[i] == "lh" || instructionName[i] == "ld" || instructionName[i] == "lbu" || instructionName[i] == "lhu" ||instructionName[i] == "lwu" ||  ibs.insType == 4){
-											ibs.isMem = true;
-									}
-									else{
-											ibs.isMem = false;									
-								}
-                cout<<"ALU OP: "<<aluString[i]<<endl;
+                if(instructionName[i] == "lb" || instructionName[i] == "lw" || instructionName[i] == "lh" || instructionName[i] == "ld" || instructionName[i] == "lbu" || instructionName[i] == "lhu" ||instructionName[i] == "lwu" ||  ibs.insType == 4){
+                            ibs.isMem = true;
+                    }
+                    else{
+                            ibs.isMem = false;									
+                }
             }
         }
         
