@@ -19,5 +19,12 @@ public:
 	void readMem (InterStateBuffers &ibf) {
 		ibf.mem_register = MEM[ibf.RZ.readInt()];
 	}
+
+	void Test () {
+		cout << "Printing Mem" <<endl;
+		for (auto elem : MEM) {
+			cout << elem.first << " " <<elem.second<< endl;
+		}
+	}
 }; 
 

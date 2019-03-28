@@ -177,12 +177,15 @@ int main(){
 		if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
+		rFile.print();
 		
+
 		iag.step(isb,alu);
 	}
 	
-	cout<<"Code executed succesfully."<<endl;
 
+	cout<<"Code executed succesfully."<<endl;
+	// rFile.print();
 	return 0;
 }
 

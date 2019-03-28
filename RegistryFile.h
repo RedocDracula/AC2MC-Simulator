@@ -32,6 +32,14 @@ public:
 		return registers[index];
 	}
 
+	void print () {
+		cout << "######" <<endl;
+		for (int i = 0;i<32;i++) {
+			cout << i << "-" << registers[i].to_ulong() << endl; 
+		}
+		cout<< "#######"<<endl;
+	}
+
 };
 
 
