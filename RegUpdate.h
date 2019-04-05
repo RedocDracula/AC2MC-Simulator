@@ -5,6 +5,6 @@
 class RegUpdate {
 public:
 	void update (InterStateBuffers & buffer, Registry_File & Reg,int destination ) { // 
-		Reg.writeInt( destination, buffer.RZ.readInt() );	
+		Reg.writeInt( destination, buffer.RY.readInt() );	
 	}
 };

@@ -9,7 +9,6 @@ class IAG{
 	public:
 		
 		void step(InterStateBuffers &isb, ALU &alu){
-			isb.return_address = isb.PC+1;
 			if(isb.isjalr == true){
 				isb.PC = isb.RZ.readInt();
 			}
@@ -22,6 +21,7 @@ class IAG{
 			else{
 				isb.PC++;
 			}
+			isb.return_address = isb.PC+1;
 			return;
 		}
 };

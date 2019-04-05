@@ -66,7 +66,6 @@ class InterStateBuffers{
 			RM.reset();
 			RZ.reset();
 			mem_register = 0;
-			return_address = 0;
 			pc_offset = 0;
 		}
 
@@ -77,6 +76,8 @@ class InterStateBuffers{
 			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
 			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
+			cout<<"\tpc_offset\t:\t"<<pc_offset<<endl;
+			cout<<"\tisjalr\t:\t"<<isjalr<<endl;
 			cout<<"\tmem_register\t:\t"<<mem_register<<endl;
 			cout<<"\treturn_address\t:\t"<<mem_register<<endl;
 			cout<<"\twrite_back_location\t:\t"<<mem_register<<endl;
