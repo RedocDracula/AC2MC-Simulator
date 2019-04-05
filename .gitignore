@@ -1,5 +1,3 @@
 .vscode/*
 *.out
-basicCode.txt
-machineCode.txt
-input.txt
+*.txt

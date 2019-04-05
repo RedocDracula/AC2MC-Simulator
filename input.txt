@@ -1,8 +1,2 @@
-<<<<<<< HEAD
 addi x1,x0,3
 addi x5,x0,10
-sd x1 0(x5)
-=======
-lw x1,2(x3)
-sw x5,4(x4)
->>>>>>> ae49acc1a5ad1bd5fe9ca717ef228faad2b0ac34

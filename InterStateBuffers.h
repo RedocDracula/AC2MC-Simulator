@@ -48,12 +48,16 @@ class InterStateBuffers{
 
 		//Write back location:- stores register number for writeback, -1 for SB type where no write back occurs.
 		int write_back_location;
+
 		InterStateBuffers(){
 			PC = 1;
 			return_address = 1;
+			mem_register = 0;
+			pc_offset = 0;
 			isjalr = false;
 			isMem = false;
 		}
+
 		void resetAll(){
 			RA.reset();
 			RB.reset();
@@ -61,6 +65,23 @@ class InterStateBuffers{
 			RY.reset();
 			RM.reset();
 			RZ.reset();
+			mem_register = 0;
+			return_address = 0;
+			pc_offset = 0;
+		}
+
+		void printAll(){
+			cout<<"********** Inter State Buffer Values ***********\n";
+			cout<<"\tRA\t:\t"<<RA.readInt()<<endl;
+			cout<<"\tRB\t:\t"<<RB.readInt()<<endl;
+			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
+			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
+			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
+			cout<<"\tmem_register\t:\t"<<mem_register<<endl;
+			cout<<"\treturn_address\t:\t"<<mem_register<<endl;
+			cout<<"\twrite_back_location\t:\t"<<mem_register<<endl;
+			cout<<"*************************************************\n";
+
 		}
 };
 	

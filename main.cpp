@@ -152,9 +152,12 @@ int main(){
 		fetch.get(isb);
 		if(isb.IR.readInt() == 0)
 			break;
-//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		isb.printAll();
 		decode.decoder(isb,rFile);
+		isb.printAll();
 		alu.compute(isb);
+		isb.printAll();
 		if(isb.isMem == true){
 				if(isb.insType == 4){
 					memAccess.writeMem(isb);
@@ -171,16 +174,18 @@ int main(){
 		}
 		else
 			muxy.MUX_Y_SELECT = 1;
-		
+		isb.printAll();
 		isb.RY.writeInt(muxy.output(isb));
+		isb.printAll();
 		
 		if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
-		rFile.print();
+//		rFile.print();
 		
-
+		isb.resetAll();
 		iag.step(isb,alu);
+		isb.printAll();
 	}
 	
 
