@@ -17,7 +17,7 @@ public:
 	}
 
 	void writeInt(int index, int value) {
-		registers[index] = value;
+		if (index != 0) registers[index] = value;
 	}
 
 	int readInt( int index ) {
@@ -25,7 +25,7 @@ public:
 	}
 
 	void writeBits (int index , bitset <REG_WIDTH> value) {
-		registers[index] = value;		
+		if (index != 0) registers[index] = value;		
 	}
 
 	bitset <REG_WIDTH> readBits ( int index) {

@@ -22,6 +22,10 @@ public:
 		cout << "Read " << ibf.mem_register << " from " << ibf.RZ.readInt() <<endl;
 	}
 
+	int readMem (int value) {
+		return MEM[];
+	}
+
 	void Test () {
 		cout << "Printing Mem" <<endl;
 		for (auto elem : MEM) {
