@@ -23,7 +23,7 @@ public:
 	}
 
 	int readMem (int value) {
-		return MEM[];
+		return MEM[value];
 	}
 
 	void Test () {
