@@ -77,11 +77,11 @@ class Fetch {
                 rs1[i] = IR[15];
             }
 			int regLocation = imm.to_ulong() + rs1.to_ulong();// Read Value from here 
-            branch_address = (*MEM).readMem(regLocation); 
+            branch_address = (*MEM).readMem( regLocation); 
 		
 		} else { 
 			// Conditional Branch
-			
+
 			
 		}
 	
