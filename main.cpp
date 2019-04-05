@@ -147,17 +147,19 @@ int main(){
 
 	decode.initialise();
 
+	int i = 0;
 	// Control
 	while(1){
+		i++;
 		fetch.get(isb);
-		if(isb.IR.readInt() == 0)
+		if(isb.IR.readInt() == 0 || i > 10)
 			break;
 		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-		isb.printAll();
+//		isb.printAll();
 		decode.decoder(isb,rFile);
-		isb.printAll();
+//		isb.printAll();
 		alu.compute(isb);
-		isb.printAll();
+//		isb.printAll();
 		if(isb.isMem == true){
 				if(isb.insType == 4){
 					memAccess.writeMem(isb);
@@ -174,21 +176,21 @@ int main(){
 		}
 		else
 			muxy.MUX_Y_SELECT = 1;
-		isb.printAll();
+//		isb.printAll();
 		isb.RY.writeInt(muxy.output(isb));
-		isb.printAll();
+//		isb.printAll();
 		
 		if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
 //		rFile.print();
-		
-		isb.resetAll();
 		iag.step(isb,alu);
-		isb.printAll();
+//		isb.printAll();
+		isb.resetAll();
+//		isb.printAll();
 	}
 	
-
+	rFile.print();
 	cout<<"Code executed succesfully."<<endl;
 	// rFile.print();
 	return 0;
@@ -209,7 +211,7 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 				while(line[i]!=':' && i<line.size()) labelName.push_back(line[i++]);
 				labelNames.push_back(labelName);
 				labelLineNumber.push_back(lineNo);
-			//	cout<<"Label found : "<<labelName<<" at line no. "<<lineNo<<endl;
+//				cout<<"Label found : "<<labelName<<" at line no. "<<lineNo<<endl;
 			}
 		}
 	}

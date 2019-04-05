@@ -72,6 +72,9 @@ class Decode{
             for(int i=0; i<7; i++){
                 func7[i] = IR[25+i];
             }
+						
+						hasFunc3 = true;
+    				hasFunc7 = true;
 
             ibs.write_back_location = rd.to_ulong();
         } 
@@ -93,6 +96,7 @@ class Decode{
                 imm1[i] = IR[20+i];
             }
             hasFunc7 = false;
+						hasFunc3 = true;
 
             ibs.write_back_location = rd.to_ulong();
         }
@@ -120,7 +124,8 @@ class Decode{
             }
             imm1[11] = IR[31];
             hasFunc7 = false;
-
+						hasFunc3 = true;
+	
             ibs.write_back_location = -1;
         }
         if(insType == 4){
@@ -145,6 +150,7 @@ class Decode{
                 imm1[i+5] = IR[25+i];
             }
             hasFunc7 = false;
+						hasFunc3 = true;
 
             ibs.write_back_location = -1 ;
         }
@@ -163,7 +169,7 @@ class Decode{
             for(int i=0; i<10; i++){
                 imm2[i] = IR[21+i];
             }
-            imm2[31] = IR[31];
+            imm2[19] = IR[31];
             hasFunc7 = false;
             hasFunc3 = false;
 
@@ -236,9 +242,9 @@ class Decode{
             relStr = relStr + "-1";
         }
 
-
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
+					
             if(relevantstr[i] == relStr){
                 ibs.ALU_OP = aluString[i];
                 if(instructionName[i]== "jalr"){
