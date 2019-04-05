@@ -1,3 +1,7 @@
 .vscode/*
+<<<<<<< Updated upstream
 *.out
 *.txt
+=======
+*.out
+>>>>>>> Stashed changes
