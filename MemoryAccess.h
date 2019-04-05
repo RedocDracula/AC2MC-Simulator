@@ -14,10 +14,12 @@ public:
 	
 	void writeMem(InterStateBuffers &isb) {
 		MEM[isb.RZ.readInt()] = isb.RM.readInt();
+		cout << "Wrote " << isb.RM.readInt() << " at " << isb.RZ.readInt() <<endl;
 	}
 
 	void readMem (InterStateBuffers &ibf) {
 		ibf.mem_register = MEM[ibf.RZ.readInt()];
+		cout << "Read " << ibf.mem_register << " from " << ibf.RZ.readInt() <<endl;
 	}
 
 	void Test () {
