@@ -1,7 +1,5 @@
 .vscode/*
-<<<<<<< Updated upstream
 *.out
-*.txt
-=======
-*.out
->>>>>>> Stashed changes
+input.txt
+machineCode.txt
+basicCode.txt
