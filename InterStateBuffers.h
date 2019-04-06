@@ -46,8 +46,23 @@ class InterStateBuffers{
 		string ALU_OP;
 		bool isjalr, isMem;
 
-		//Write back location:- stores register number for writeback, -1 for SB type where no write back occurs.
+		//Write back location:- stores register number for writeback, 
+		//-1 for SB type where no write back occurs.
 		int write_back_location;
+
+		//inserting knobs as bool types, specification given with each knob
+		//take in the value at runtime or hardcode it for development purposes
+
+		bool k1;	// E/D pipelining
+					// This would be used by the control unit
+		bool k2;	// E/D data forwarding
+					// Used by decode, execute, memory units
+		bool k3;	// E/D printing register file values after each cycle
+					// Used by control
+		bool k4;	// E/D printing pipleline registers after each cycle
+					// Control
+		bool k5;	// E/D printing for a specific instruction, handle later
+					// Control, decode(maybe)
 
 		InterStateBuffers(){
 			PC = 1;

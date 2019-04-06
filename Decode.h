@@ -26,8 +26,11 @@ class Decode{
         }
 
         ifile.close();
+        pWrite = 0;
+        ppWrite = 0;
     }
 
+    //Declaring variables
     bitset<7> opcode;
     bitset<3> func3;
     bitset<7> func7;
@@ -39,8 +42,17 @@ class Decode{
     int locA, locB, locC;
     bool hasFunc3 = true;
     bool hasFunc7 = true;
+    int pWrite;     // holds the write register value for the previous instruction
+    int ppWrite;    // the instruction before that
+
+
     //actual decoder
     void decoder(InterStateBuffers &ibs, Registry_File &regFile){
+        // initialising actual valies of immediate
+        int immVal1;
+        int immVal2;
+
+        //initialising class variables
         func3 = -1;
         func7 = -1;
         imm1 = -1;
@@ -48,6 +60,7 @@ class Decode{
         rs1 = 0;
         rs2 = 0;
         rd = 0;
+
         int insType = ibs.insType;
         bitset<32> IR(ibs.IR.readInt());
 
@@ -73,8 +86,8 @@ class Decode{
                 func7[i] = IR[25+i];
             }
 						
-						hasFunc3 = true;
-    				hasFunc7 = true;
+			hasFunc3 = true;
+    		hasFunc7 = true;
 
             ibs.write_back_location = rd.to_ulong();
         } 
@@ -96,7 +109,7 @@ class Decode{
                 imm1[i] = IR[20+i];
             }
             hasFunc7 = false;
-						hasFunc3 = true;
+			hasFunc3 = true;
 
             ibs.write_back_location = rd.to_ulong();
         }
@@ -124,7 +137,7 @@ class Decode{
             }
             imm1[11] = IR[31];
             hasFunc7 = false;
-						hasFunc3 = true;
+			hasFunc3 = true;
 	
             ibs.write_back_location = -1;
         }
@@ -200,29 +213,93 @@ class Decode{
         //Register file object will be passed and values will be read
         // MUX B Implementation
         //Uncomment the following lines once the register file has been created and update the names.
-        ibs.RA.writeInt(regFile.readInt(locA));
+
+        //Feeding buffer RA
+        if(locA == pWrite && pWrite!=0){
+            ibs.RA.writeInt(ibs.RZ.readInt());
+            // Logic for load and stall not implemented yet
+        }
+        else if(locA = ppWrite && ppWrite != 0){
+            ibs.RA.writeInt(ibs.RX.readInt());
+        }
+        else{
+            ibs.RA.writeInt(regFile.readInt(locA));
+        }
+
+
+        //Feeding in RB
         if(insType == 1 || insType ==3){
-            ibs.RB.writeInt(regFile.readInt(locB));
+            if(locB == pWrite && pWrite !=0){
+                ibs.RB.writeInt(ibs.RZ.readInt());
+                //Logic for load and stall not implemented yet
+            }
+            else if(locB == ppWrite && pWrite != 0){
+                ibs.RB.writeInt(ibs.RX.readInt());
+            }
+            else{
+                ibs.RB.writeInt(regFile.readInt(locB));
+            }
         }
         else if(insType == 2 || insType == 4){
-            ibs.RB.writeInt(imm1.to_ulong());
+            if(imm1[11] == 0){
+                immVal1 = imm1.to_ulong();
+            }
+            else{
+                immVal1 = imm1.flip().to_ulong();
+                immVal1++;
+                immVal1 = immVal1*-1;
+            }
+            ibs.RB.writeInt(immVal1);
         }
         else if(insType == 6){
-            ibs.RB.writeInt(imm2.to_ulong());
+            if(imm2[19] == 0){
+                immVal2 = imm2.to_ulong();
+            }
+            else{
+                immVal2 = imm2.flip().to_ulong();
+                immVal2++;
+                immVal2 = immVal2*-1;
+            }
+            ibs.RB.writeInt(immVal2);
         }
 
         if(insType==3){
-            ibs.pc_offset = imm1.to_ulong();
+            if(imm1[11] == 0){
+                immVal1 = imm1.to_ulong();
+            }
+            else{
+                immVal1 = imm1.flip().to_ulong();
+                immVal1++;
+                immVal1 = immVal1*-1;
+            }
+            ibs.pc_offset = immVal1;
         }
         else if(insType==5){
-            ibs.pc_offset = imm2.to_ulong();
+            if(imm2[19] == 0){
+                immVal2 = imm2.to_ulong();
+            }
+            else{
+                immVal2 = imm2.flip().to_ulong();
+                immVal2++;
+                immVal2 = immVal2*-1;
+            }
+            ibs.pc_offset = immVal2;
         }
         else{
             ibs.pc_offset = 0;
         }
 
         if(insType == 4){
-            ibs.RM.writeInt(regFile.readInt(locC));
+            if(locC == pWrite && pWrite !=0){
+                ibs.RM.writeInt(ibs.RZ.readInt());
+                //load vaala logic
+            }
+            else if(locC == ppWrite && ppWrite !=0){
+                ibs.RM.writeInt(ibs.RX.readInt());
+            }
+            else{
+                ibs.RM.writeInt(regFile.readInt(locC));
+            }
         }
 
 
@@ -262,6 +339,10 @@ class Decode{
                 }
             }
         }
+
+        // Updating the previous write registers
+        ppWrite = pWrite;
+        pWrite = locC;
         
     }
 };
