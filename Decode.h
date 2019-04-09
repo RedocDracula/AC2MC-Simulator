@@ -216,9 +216,9 @@ class Decode{
         //Uncomment the following lines once the register file has been created and update the names.
 
         //Feeding buffer RA
-        if(locA == pWrite && pWrite!=0 && ibs.k1 == true){
+        if(locA == pWrite && pWrite!=0 && ibs.enablePipe == true){
             // if pipelining and data forwarding is true
-            if(ibs.k2 == true){
+            if(ibs.enableDF == true){
                 // for general instruction
                 ibs.RA.writeInt(ibs.RZ.readInt());
 
@@ -230,8 +230,8 @@ class Decode{
                 // Stall the pipeline
             }
         }
-        else if(locA = ppWrite && ppWrite != 0 && ibs.k1 == true){
-            if(ibs.k2 == true){
+        else if(locA = ppWrite && ppWrite != 0 && ibs.enablePipe == true){
+            if(ibs.enableDF == true){
                 // for general instruction, no load exceptions are here
                 ibs.RA.writeInt(ibs.RX.readInt());
             }
@@ -249,8 +249,8 @@ class Decode{
         //Negations have been added, in case a new function is made replace it here.
 
         if(insType == 1 || insType ==3){
-            if(locB == pWrite && pWrite !=0 && ibs.k1 == true){
-                if(ibs.k2 == true){
+            if(locB == pWrite && pWrite !=0 && ibs.enablePipe == true){
+                if(ibs.enableDF == true){
                     // for a general instruction
                     ibs.RB.writeInt(ibs.RZ.readInt());
                     //Logic for load and stall not implemented yet
@@ -261,8 +261,8 @@ class Decode{
                     // Stall 
                 }
             }
-            else if(locB == ppWrite && pWrite != 0 && ibs.k1 == true){
-                if(ibs.k2 == true){
+            else if(locB == ppWrite && pWrite != 0 && ibs.enablePipe == true){
+                if(ibs.enableDF == true){
                     ibs.RB.writeInt(ibs.RX.readInt());
                 }
                 else{
@@ -323,8 +323,8 @@ class Decode{
         }
 
         if(insType == 4){
-            if(locC == pWrite && pWrite !=0 && ibs.k1 == true){
-                if(ibs.k2 == true){
+            if(locC == pWrite && pWrite !=0 && ibs.enablePipe == true){
+                if(ibs.enableDF == true){
                     // for a general instruction
                     ibs.RM.writeInt(ibs.RZ.readInt());
                     //load vaala logic not implemented yet
@@ -333,8 +333,8 @@ class Decode{
                     //Stall
                 }
             }
-            else if(locC == ppWrite && ppWrite !=0 && ibs.k1 == true){
-                if(ibs.k2 == true){
+            else if(locC == ppWrite && ppWrite !=0 && ibs.enablePipe == true){
+                if(ibs.enableDF == true){
                     ibs.RM.writeInt(ibs.RX.readInt());
                 }
                 else{
@@ -385,7 +385,7 @@ class Decode{
         }
 
         // Updating the previous write registers
-        // if stall is activated, feed pWrite with 0 or insType == 4 ?? YUS YUS
+        // if stall is activated, feed pWrite with 0 or insType == 4 ??
         ppWrite = pWrite;
         pWrite = locC;
         
