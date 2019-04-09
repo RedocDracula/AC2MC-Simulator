@@ -1,6 +1,7 @@
 #pragma once
 #include "InterStateBuffers.h"
 
+#include "Functions.h"
 #include <bitset>
 #include <map>
 #include <fstream>
@@ -24,11 +25,12 @@ class Fetch {
 	
 	private:
 		map <int , bitset <REG_WIDTH> > mem_map;
-		map <int , int> itype_map;
 		InterStateBuffers * buf;
+		map <int , int> itype_map;
 		int hazardType = 0;
 		bitset <REG_WIDTH > branch_address;
-		// MemoryAccess *MEM; // TODO setMEM
+		bitset <REG_WIDTH > branch_address_def;
+		
 
 	int detectControlHazards(InterStateBuffers & buf) { //Return 0 for Ok, 1 jal , jalr 2  , 3 for branch
 		bitset <REG_WIDTH > temp;
@@ -67,7 +69,7 @@ class Fetch {
                 imm2[i] = IR[21+i];
             }
             imm2[31] = IR[31];
-			branch_address = imm2.to_ulong();
+			branch_address = bitsetRead(imm2) + buf.PC;  
 			
 		} else if (hazardType == 2) {
 			// jalr Instruction
@@ -77,9 +79,8 @@ class Fetch {
             for(int i=0; i<5; i++){
                 rs1[i] = IR[15];
             }
-			int regLocation = imm.to_ulong() + rs1.to_ulong();// Read Value from here 
-            // branch_address = (*MEM).readMem( regLocation); 
-			branch_address = mem_map[regLocation];
+			int regLocation = bitsetRead(imm) + bitsetRead(rs1); 
+            branch_address = mem_map[regLocation];
 		} else { 
 			
             imm1[10] = IR[7];
@@ -90,8 +91,9 @@ class Fetch {
             for(int i=0;i<6;i++){
                 imm1[i+4] = IR[25+i];
             }
-            imm1[11] = IR[31];
-			branch_address = branch_address = mem_map[imm1.to_ullong()];
+            imm1[11] = IR[31]; // imm1 contains offset
+			branch_address = mem_map[bitsetRead(imm1) + buf.PC];
+			branch_address_def = buf.PC + 4; //  
 		}
 	
 	}
