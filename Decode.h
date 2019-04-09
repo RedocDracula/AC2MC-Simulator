@@ -10,6 +10,23 @@ class Decode{
     vector <string> instructionName, aluString, relevantstr;
 
     public:
+    // Declaring Variables
+    bitset<7> opcode;
+    bitset<3> func3;
+    bitset<7> func7;
+    bitset<12> imm1;
+    bitset<20> imm2;
+    bitset<5> rs1;
+    bitset<5> rs2;
+    bitset<5> rd;
+    int locA, locB, locC;
+    bool hasFunc3 = true;
+    bool hasFunc7 = true;
+    int pWrite;     // holds the write register value for the previous instruction
+    int ppWrite;    // the instruction before that
+
+
+    // initialising function
     void initialise() {
         ifstream ifile("ALU.txt");
         string line,temp;
@@ -29,22 +46,6 @@ class Decode{
         pWrite = 0;
         ppWrite = 0;
     }
-
-    //Declaring variables
-    bitset<7> opcode;
-    bitset<3> func3;
-    bitset<7> func7;
-    bitset<12> imm1;
-    bitset<20> imm2;
-    bitset<5> rs1;
-    bitset<5> rs2;
-    bitset<5> rd;
-    int locA, locB, locC;
-    bool hasFunc3 = true;
-    bool hasFunc7 = true;
-    int pWrite;     // holds the write register value for the previous instruction
-    int ppWrite;    // the instruction before that
-
 
     //actual decoder
     void decoder(InterStateBuffers &ibs, Registry_File &regFile){
@@ -215,11 +216,11 @@ class Decode{
         //Uncomment the following lines once the register file has been created and update the names.
 
         //Feeding buffer RA
-        if(locA == pWrite && pWrite!=0){
+        if(locA == pWrite && pWrite!=0 && ibs.k2 == true){
             ibs.RA.writeInt(ibs.RZ.readInt());
             // Logic for load and stall not implemented yet
         }
-        else if(locA = ppWrite && ppWrite != 0){
+        else if(locA = ppWrite && ppWrite != 0 && ibs.k2 == true){
             ibs.RA.writeInt(ibs.RX.readInt());
         }
         else{
@@ -229,11 +230,11 @@ class Decode{
 
         //Feeding in RB
         if(insType == 1 || insType ==3){
-            if(locB == pWrite && pWrite !=0){
+            if(locB == pWrite && pWrite !=0 && ibs.k2 == true){
                 ibs.RB.writeInt(ibs.RZ.readInt());
                 //Logic for load and stall not implemented yet
             }
-            else if(locB == ppWrite && pWrite != 0){
+            else if(locB == ppWrite && pWrite != 0 && ibs.k2 == true){
                 ibs.RB.writeInt(ibs.RX.readInt());
             }
             else{
@@ -290,11 +291,11 @@ class Decode{
         }
 
         if(insType == 4){
-            if(locC == pWrite && pWrite !=0){
+            if(locC == pWrite && pWrite !=0 && ibs.k2 == true){
                 ibs.RM.writeInt(ibs.RZ.readInt());
                 //load vaala logic
             }
-            else if(locC == ppWrite && ppWrite !=0){
+            else if(locC == ppWrite && ppWrite !=0 && ibs.k2 == true){
                 ibs.RM.writeInt(ibs.RX.readInt());
             }
             else{
