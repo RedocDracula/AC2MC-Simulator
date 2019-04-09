@@ -53,6 +53,7 @@ class Fetch {
 	void returnBrachAddress (InterStateBuffers & buf) {
 		bitset <20> imm2;
 		bitset <12> imm;
+		bitset <12> imm1;
 		bitset <REG_WIDTH> IR;
 		bitset <5> rs1;
 		IR = buf.IR.readInt();
@@ -77,12 +78,20 @@ class Fetch {
                 rs1[i] = IR[15];
             }
 			int regLocation = imm.to_ulong() + rs1.to_ulong();// Read Value from here 
-            branch_address = (*MEM).readMem( regLocation); 
-		
+            // branch_address = (*MEM).readMem( regLocation); 
+			branch_address = mem_map[regLocation];
 		} else { 
-			// Conditional Branch
-
 			
+            imm1[10] = IR[7];
+
+            for(int i=0;i<4;i++){
+                imm1[i] = IR[8+i];
+            }
+            for(int i=0;i<6;i++){
+                imm1[i+4] = IR[25+i];
+            }
+            imm1[11] = IR[31];
+			branch_address = branch_address = mem_map[imm1.to_ullong()];
 		}
 	
 	}
