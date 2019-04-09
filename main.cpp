@@ -23,6 +23,7 @@ using namespace std;
 
 void findLabels(string,vector<string>&,vector<int>&);
 void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
+void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 
 int main(){
 
@@ -148,35 +149,31 @@ int main(){
 
 	decode.initialise();
 
-	int i = 0;
-	// Control
-	while(1){
-		i++;
-		fetch.get(isb);
-		if(isb.IR.readInt() == 0 || i > 20)
-			break;
-		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-//		isb.printAll();
+	if(!isb.enablePipe){
+		int i = 0;
+		while(1){
+			i++;
+			fetch.get(isb);
+			if(isb.IR.readInt() == 0 || i > 200)
+				break;
+
 		decode.decoder(isb,rFile);
-//		isb.printAll();
 		alu.compute(isb);
-//		isb.printAll();
-
 		memory(isb, memAccess, muxy);
-
-		if(isb.write_back_location != -1){
-			regUpdate.update(isb,rFile, isb.write_back_location);
-		}
-//		rFile.print();
+		writeBack(isb, regUpdate, rFile);
 		iag.step(isb,alu);
-//		isb.printAll();
 		isb.resetAll();
-//		isb.printAll();
-	}
+
+//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+		if(isb.printRegFile) rFile.print();
+		if(isb.printISB) isb.printAll();
+		}
 	
-	rFile.print();
-	cout<<"Code executed succesfully."<<endl;
-	// rFile.print();
+		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
+		cout<<" Final register values :\n";	
+		rFile.print();
+	}
 	return 0;
 }
 
@@ -211,7 +208,6 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 				else {
 					memAccess.readMem(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
-
 				}
 		}
 		else if(isb.isjalr == true || isb.insType == 5){
@@ -219,7 +215,11 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 		}
 		else
 			muxy.MUX_Y_SELECT = 1;
-//		isb.printAll();
 		isb.RY.writeInt(muxy.output(isb));
-//		isb.printAll();
+}
+
+void writeBack(InterStateBuffers &isb, RegUpdate &regUpdate, Registry_File &rFile){
+	if(isb.write_back_location != -1){
+			regUpdate.update(isb,rFile, isb.write_back_location);
+		}
 }
