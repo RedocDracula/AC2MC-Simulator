@@ -14,6 +14,9 @@ public:
 		for (int i = 0;i<REG_WIDTH;i++) {
 			registers.push_back(0);
 		}
+
+		registers[2] = 200000; // INTIAL VALUE OF STACK POINTER
+
 	}
 
 	void writeInt(int index, int value) {
@@ -21,7 +24,7 @@ public:
 	}
 
 	int readInt( int index ) {
-		return registers[index].to_ulong();
+		return registers[index].to_ulong();		
 	}
 
 	void writeBits (int index , bitset <REG_WIDTH> value) {

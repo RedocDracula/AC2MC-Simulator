@@ -110,7 +110,7 @@ class Decode{
                 imm1[i] = IR[20+i];
             }
             hasFunc7 = false;
-			hasFunc3 = true;
+						hasFunc3 = true;
 
             ibs.write_back_location = rd.to_ulong();
         }
@@ -211,6 +211,7 @@ class Decode{
         locB = rs2.to_ulong();
         locC = rd.to_ulong();
 
+				
         //Register file object will be passed and values will be read
         // MUX B Implementation
         //Uncomment the following lines once the register file has been created and update the names.
@@ -230,7 +231,7 @@ class Decode{
                 // Stall the pipeline
             }
         }
-        else if(locA = ppWrite && ppWrite != 0 && ibs.enablePipe == true){
+        else if(locA == ppWrite && ppWrite != 0 && ibs.enablePipe == true){
             if(ibs.enableDF == true){
                 // for general instruction, no load exceptions are here
                 ibs.RA.writeInt(ibs.RX.readInt());
@@ -274,7 +275,7 @@ class Decode{
             }
         }
         else if(insType == 2 || insType == 4){
-            if(imm1[11] == 0){
+						if(imm1[11] == 0){
                 immVal1 = imm1.to_ulong();
             }
             else{
@@ -382,7 +383,11 @@ class Decode{
                             ibs.isMem = false;									
                 }
             }
+
+						
         }
+
+				
 
         // Updating the previous write registers
         // if stall is activated, feed pWrite with 0 or insType == 4 ??

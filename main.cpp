@@ -22,6 +22,7 @@
 using namespace std;
 
 void findLabels(string,vector<string>&,vector<int>&);
+void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
 
 int main(){
 
@@ -75,7 +76,7 @@ int main(){
 			
 			// replacing sp with x2
 			for(int i=1;i<(line.size()-2);i++){
-				if(line[i]=='s' &&line[i+1]=='p'&&(line[i-1]==' '||line[i-1]==',')&&(line[i+2]==' ' ||line[i+2]==','||line[i+2]=='\n')){
+				if(line[i]=='s' &&line[i+1]=='p'&&(line[i-1]==' '||line[i-1]==','||line[i-1]=='(')&&(line[i+2]==' ' ||line[i+2]==','||line[i+2]==')'||line[i+2]=='\n')){
 					line[i]='x';
 					line[i+1]='2';
 				}
@@ -121,7 +122,7 @@ int main(){
 				insType = 6;
 			}
 			else {
-				cout<<"!! Instuction not identified : "<<line<<endl;
+				cout<<"ERROR !! Instuction not identified : "<<line<<endl;
 				machineCode = bitset<32>(0);
 				insType = -1;
 			}
@@ -152,7 +153,7 @@ int main(){
 	while(1){
 		i++;
 		fetch.get(isb);
-		if(isb.IR.readInt() == 0 || i > 10)
+		if(isb.IR.readInt() == 0 || i > 20)
 			break;
 		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
 //		isb.printAll();
@@ -160,26 +161,9 @@ int main(){
 //		isb.printAll();
 		alu.compute(isb);
 //		isb.printAll();
-		if(isb.isMem == true){
-				if(isb.insType == 4){
-					memAccess.writeMem(isb);
-					muxy.MUX_Y_SELECT = 1;
-				}
-				else {
-					memAccess.readMem(isb);
-					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 
-				}
-		}
-		else if(isb.isjalr == true || isb.insType == 5){
-			muxy.MUX_Y_SELECT = 3;
-		}
-		else
-			muxy.MUX_Y_SELECT = 1;
-//		isb.printAll();
-		isb.RY.writeInt(muxy.output(isb));
-//		isb.printAll();
-		
+		memory(isb, memAccess, muxy);
+
 		if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
@@ -216,4 +200,26 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 		}
 	}
 	iFile.close();
+}
+
+void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
+			if(isb.isMem == true){
+				if(isb.insType == 4){
+					memAccess.writeMem(isb);
+					muxy.MUX_Y_SELECT = 1;
+				}
+				else {
+					memAccess.readMem(isb);
+					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
+
+				}
+		}
+		else if(isb.isjalr == true || isb.insType == 5){
+			muxy.MUX_Y_SELECT = 3;
+		}
+		else
+			muxy.MUX_Y_SELECT = 1;
+//		isb.printAll();
+		isb.RY.writeInt(muxy.output(isb));
+//		isb.printAll();
 }

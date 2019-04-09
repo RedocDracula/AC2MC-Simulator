@@ -20,12 +20,12 @@ class IType {
     /* for ex : lw x2,42(x3) : will extract 2,24,3 i.e parameters needed for MC generation.*/
     vector <int> extractint(string str) { // recieves a string and extracts all the integers and returns them in a list (vector)
         vector <int> result;
-        int sum,currentint;
         
+        int sum,currentint, sum2;
         for(int strIndex = 0 ; strIndex < str.size() ; strIndex++) {
             
             sum = 0;
-            bool intfound = 0;
+            bool intfound = 0, intfound2 = 0;
 
             while(strIndex < str.size() && isdigit(str[strIndex])) {
                 currentint = str[strIndex] - '0';
@@ -33,9 +33,24 @@ class IType {
                 strIndex++;
                 intfound = 1;
             }
+
+            if(str[strIndex] == '-'){
+                sum2 = 0;
+                strIndex++;
+                while(strIndex < str.size() && isdigit(str[strIndex])){
+                    currentint = str[strIndex] - '0';
+                    sum2 = sum2*10 + currentint;
+                    strIndex++;
+                    intfound2 = 1;
+                }
+                sum2 = sum2*(-1);
+            }
             
             if(intfound)
                 result.push_back(sum);
+            
+            if(intfound2)
+                result.push_back(sum2);
         }
 
         return result; //returning vector of extracted parameters
@@ -111,7 +126,7 @@ class IType {
 		}
         
         for(int i = 0; i<3; i++) {
-			MachineCode[i+12] = (funct3str[i] == '0') ? 0 : 1;
+			MachineCode[i+12] = (funct3str[funct3str.size()-i-1] == '0') ? 0 : 1;
 		}
 
         for(int i=0;i<5;i++)
