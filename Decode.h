@@ -216,12 +216,29 @@ class Decode{
         //Uncomment the following lines once the register file has been created and update the names.
 
         //Feeding buffer RA
-        if(locA == pWrite && pWrite!=0 && ibs.k2 == true){
-            ibs.RA.writeInt(ibs.RZ.readInt());
-            // Logic for load and stall not implemented yet
+        if(locA == pWrite && pWrite!=0 && ibs.k1 == true){
+            // if pipelining and data forwarding is true
+            if(ibs.k2 == true){
+                // for general instruction
+                ibs.RA.writeInt(ibs.RZ.readInt());
+
+                // for load instruction logic to be implemented
+                // Stall then next step. Then continue
+            }
+            // if only pipelining is true
+            else{
+                // Stall the pipeline
+            }
         }
-        else if(locA = ppWrite && ppWrite != 0 && ibs.k2 == true){
-            ibs.RA.writeInt(ibs.RX.readInt());
+        else if(locA = ppWrite && ppWrite != 0 && ibs.k1 == true){
+            if(ibs.k2 == true){
+                // for general instruction, no load exceptions are here
+                ibs.RA.writeInt(ibs.RX.readInt());
+            }
+            // if only pipelining is true
+            else{
+                // Stall the pipeline
+            }
         }
         else{
             ibs.RA.writeInt(regFile.readInt(locA));
@@ -229,13 +246,28 @@ class Decode{
 
 
         //Feeding in RB
+        //Negations have been added, in case a new function is made replace it here.
+
         if(insType == 1 || insType ==3){
-            if(locB == pWrite && pWrite !=0 && ibs.k2 == true){
-                ibs.RB.writeInt(ibs.RZ.readInt());
-                //Logic for load and stall not implemented yet
+            if(locB == pWrite && pWrite !=0 && ibs.k1 == true){
+                if(ibs.k2 == true){
+                    // for a general instruction
+                    ibs.RB.writeInt(ibs.RZ.readInt());
+                    //Logic for load and stall not implemented yet
+                    // Stall then continue
+                }
+                // if only pipelining is true
+                else{
+                    // Stall 
+                }
             }
-            else if(locB == ppWrite && pWrite != 0 && ibs.k2 == true){
-                ibs.RB.writeInt(ibs.RX.readInt());
+            else if(locB == ppWrite && pWrite != 0 && ibs.k1 == true){
+                if(ibs.k2 == true){
+                    ibs.RB.writeInt(ibs.RX.readInt());
+                }
+                else{
+                    //Stall
+                }
             }
             else{
                 ibs.RB.writeInt(regFile.readInt(locB));
@@ -291,12 +323,23 @@ class Decode{
         }
 
         if(insType == 4){
-            if(locC == pWrite && pWrite !=0 && ibs.k2 == true){
-                ibs.RM.writeInt(ibs.RZ.readInt());
-                //load vaala logic
+            if(locC == pWrite && pWrite !=0 && ibs.k1 == true){
+                if(ibs.k2 == true){
+                    // for a general instruction
+                    ibs.RM.writeInt(ibs.RZ.readInt());
+                    //load vaala logic not implemented yet
+                }
+                else{
+                    //Stall
+                }
             }
-            else if(locC == ppWrite && ppWrite !=0 && ibs.k2 == true){
-                ibs.RM.writeInt(ibs.RX.readInt());
+            else if(locC == ppWrite && ppWrite !=0 && ibs.k1 == true){
+                if(ibs.k2 == true){
+                    ibs.RM.writeInt(ibs.RX.readInt());
+                }
+                else{
+                    //Stall
+                }
             }
             else{
                 ibs.RM.writeInt(regFile.readInt(locC));
@@ -342,6 +385,7 @@ class Decode{
         }
 
         // Updating the previous write registers
+        // if stall is activated, feed pWrite with 0 or insType == 4 ?? YUS YUS
         ppWrite = pWrite;
         pWrite = locC;
         
