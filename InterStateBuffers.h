@@ -53,11 +53,11 @@ class InterStateBuffers{
 		//inserting knobs as bool types, specification given with each knob
 		//take in the value at runtime or hardcode it for development purposes
 
-		bool enablePipe;	// E/D pipelining
+		bool enablePipe ;	// E/D pipelining
 					// This would be used by the control unit
-		bool enableDF;	// E/D data forwarding
+		bool enableDF ;	// E/D data forwarding
 					// Used by decode, execute, memory units
-		bool printRegFile;	// E/D printing register file values after each cycle
+		bool printRegFile ;	// E/D printing register file values after each cycle
 					// Used by control
 		bool printISB;	// E/D printing pipleline registers after each cycle
 					// Control
@@ -71,6 +71,13 @@ class InterStateBuffers{
 			pc_offset = 0;
 			isjalr = false;
 			isMem = false;
+
+		 enablePipe = false;
+		 enableDF = false; 
+		 printRegFile = false;
+		 printISB = false;
+		 printISBspecific = false;
+
 		}
 
 		void resetAll(){

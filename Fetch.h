@@ -28,7 +28,7 @@ class Fetch {
 		InterStateBuffers * buf;
 		int hazardType = 0;
 		bitset <REG_WIDTH > branch_address;
-		MemoryAccess *MEM; // TODO setMEM
+		// MemoryAccess *MEM; // TODO setMEM
 
 	int detectControlHazards(InterStateBuffers & buf) { //Return 0 for Ok, 1 jal , jalr 2  , 3 for branch
 		bitset <REG_WIDTH > temp;
@@ -118,7 +118,7 @@ class Fetch {
 		 
 		int hazardType = detectControlHazards(buf);
 		if (hazardType != 0) {
-			returnBrachAddress();
+			returnBrachAddress(buf);
 		}
 	}
 
