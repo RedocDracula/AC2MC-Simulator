@@ -56,15 +56,8 @@ int main(){
 	ujTypeInsObj.initialise(dir + "UJType.txt");
 	uTypeInsObj.initialise(dir + "UType.txt");
 
-
-	Registry_File rFile;
-	Fetch fetch;
-	MUX_Y muxy;
-	Decode decode;
+	
 	MemoryAccess memAccess;
-	RegUpdate regUpdate;
-	ALU alu;
-	IAG iag;
 
 	assembler_initiate(memAccess);
 
@@ -151,6 +144,14 @@ int main(){
 	iFile.close();
 	oFile.close();
 	oFile2.close();
+
+	Registry_File rFile;
+	Fetch fetch;
+	MUX_Y muxy;
+	Decode decode;
+	RegUpdate regUpdate;
+	ALU alu;
+	IAG iag;
 
 	decode.initialise();
 
