@@ -12,7 +12,8 @@ private:
 	
 public:
 	
-	void writeMem(InterStateBuffers &isb) {
+	void writeMem(InterStateBuffers &isb) { 
+		//TODO : Divide the original into 4 Bytes and Write
 		MEM[isb.RZ.readInt()] = isb.RM.readInt();
 		cout << "Wrote " << isb.RM.readInt() << " at " << isb.RZ.readInt() <<endl;
 	}

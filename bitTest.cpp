@@ -1,3 +1,4 @@
+#include "Functions.h"
 #include <bits/stdc++.h>
 #define inchar			getchar
 #define outchar(x)		putchar(x)
@@ -12,6 +13,7 @@ inline void instr(char *str){register char c=0;register int i=0;while(c<33)c=inc
 
 
 int main () {
-	// bitset <32 >
-	int k = 2;	
+	int k =  - 2;
+	bitset <32> s = -5;
+	cout<< s.to_ulong() << " " << bitsetRead(s) <<endl; 
 }

@@ -27,6 +27,8 @@ class Fetch {
 		map <int , bitset <REG_WIDTH> > mem_map;
 		InterStateBuffers * buf;
 		map <int , int> itype_map;
+		
+		// Dump these three to ISB
 		int hazardType = 0;
 		bitset <REG_WIDTH > branch_address;
 		bitset <REG_WIDTH > branch_address_def;
@@ -82,7 +84,7 @@ class Fetch {
 			int regLocation = bitsetRead(imm) + bitsetRead(rs1); 
             branch_address = mem_map[regLocation];
 		} else { 
-			
+			// Branch Instructions
             imm1[10] = IR[7];
 
             for(int i=0;i<4;i++){
@@ -91,7 +93,7 @@ class Fetch {
             for(int i=0;i<6;i++){
                 imm1[i+4] = IR[25+i];
             }
-            imm1[11] = IR[31]; // imm1 contains offset
+            imm1[11] = IR[31]; //imm1 contains offset
 			branch_address = mem_map[bitsetRead(imm1) + buf.PC];
 			branch_address_def = buf.PC + 4; //  
 		}
