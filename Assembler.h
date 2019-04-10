@@ -38,7 +38,7 @@ vector <int> extractint(string str) { // recieves a string and extracts all the 
 
 void  assembler_initiate(MemoryAccess &memobject)
 {
-    ifstream ifile("input.txt");
+    ifstream ifile("rand.txt");
     ofstream ofile("input1.txt",ios::out);
     string current;
      // matches the label to address in the memory or value it is referring to.
@@ -107,14 +107,13 @@ void  assembler_initiate(MemoryAccess &memobject)
                 i++;
             }
             while(!isalnum(current[i])) i++;
-            while(isalnum(current[i])){
+            while(i < current.size() ){
                 label.push_back(current[i]);
                 i++;
             }
             
 
-            if(insname == "la" || insname == "lw" || insname == "lb"){
-                
+            if( (insname == "la" || insname == "lw" || insname == "lb") && label[1] != '(' ){
                 ofile<<"addi "<<regname<<",x0,"<<labelLookup[label]<<endl;
                 continue;
             }
@@ -122,8 +121,22 @@ void  assembler_initiate(MemoryAccess &memobject)
             else
             ofile<<current<<endl;
         }
+
+        if(!start && !starttext){
+            ofile<<current<<endl;
+        }
        
     }
+
+    ofile.close();
+    ifile.close();
     
 }
 
+int main()
+{
+    MemoryAccess mem;
+
+    assembler_initiate(mem);
+
+}
