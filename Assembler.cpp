@@ -132,6 +132,7 @@ void  assembler_initiate(MemoryAccess &memobject)
     ifile.close();
     
 }
+<<<<<<< HEAD:Assembler.cpp
 
 int main()
 {
@@ -140,3 +141,5 @@ int main()
     assembler_initiate(mem);
 
 }
+=======
+>>>>>>> 8a86624e0d487e881ad4d8bddd9fa9cbb8775664:Assembler.h

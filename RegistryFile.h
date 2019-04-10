@@ -36,14 +36,14 @@ public:
 	}
 
 	void print () {
-		cout << "###### Registry File ######"  <<endl;
-		for (int i = 0;i<32;i+=4) {
+		cout << "====== Registry File ======"  <<endl;
+		for (int i = 0;i<8;i++) {
 			cout <<"Reg "<<i << " - " << registers[i].to_ulong() << "\t";
-			cout <<"Reg "<<i+1 << " - " << registers[i+1].to_ulong() << "\t";
-			cout <<"Reg "<<i+2 << " - " << registers[i+2].to_ulong() << "\t";
-			cout <<"Reg "<<i+3 << " - " << registers[i+3].to_ulong() << endl; 
+			cout <<"Reg "<<i+8 << " - " << registers[i+8].to_ulong() << "\t";
+			cout <<"Reg "<<i+16 << " - " << registers[i+16].to_ulong() << "\t";
+			cout <<"Reg "<<i+24 << " - " << registers[i+24].to_ulong() << endl; 
 		}
-		cout<< "############################"<<endl;
+		cout<< "============================"<<endl;
 	}
 
 };
