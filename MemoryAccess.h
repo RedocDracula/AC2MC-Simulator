@@ -3,6 +3,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include "InterStateBuffers.h"
 
 using namespace std;
 class  MemoryAccess {
@@ -18,6 +19,11 @@ public:
 		cout << "Wrote " << isb.RM.readInt() << " at " << isb.RZ.readInt() <<endl;
 	}
 
+	void writeMem(int address, int value){
+		MEM[address] = value;
+		cout<<" wrote " << value <<" at "<<address<<endl;
+	}
+	
 	void readMem (InterStateBuffers &ibf) {
 		ibf.mem_register = MEM[ibf.RZ.readInt()];
 		cout << "Read " << ibf.mem_register << " from " << ibf.RZ.readInt() <<endl;

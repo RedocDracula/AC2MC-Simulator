@@ -111,7 +111,7 @@ class SBType {
 
         
         for(int i = 0; i<3; i++)
-            MachineCode[i+12] = (funct3str[i] == '0') ? 0 : 1;
+            MachineCode[i+12] = (funct3str[funct3str.size()-i-1] == '0') ? 0 : 1;
 
         for(int i=0;i<5;i++)
             MachineCode[i+15] = rs1[i];

@@ -104,7 +104,7 @@ class RType {
 		}
         
         for(int i = 0; i<3; i++) {
-			MachineCode[i+12] = (funct3str[i] == '0') ? 0 : 1;
+			MachineCode[i+12] = (funct3str[funct3str.size()-i-1] == '0') ? 0 : 1;
 		}
 
         for(int i=0;i<5;i++)
@@ -114,7 +114,7 @@ class RType {
             MachineCode[i+20] = rs2[i];
         
         for(int i=0;i<7;i++)
-            MachineCode[i+25] = (funct7str[i] == '0') ? 0 : 1;
+            MachineCode[i+25] = (funct7str[funct7str.size()-i-1] == '0') ? 0 : 1;
 
         return MachineCode;
 

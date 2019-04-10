@@ -22,6 +22,8 @@
 using namespace std;
 
 void findLabels(string,vector<string>&,vector<int>&);
+void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
+void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 
 int main(){
 
@@ -75,7 +77,7 @@ int main(){
 			
 			// replacing sp with x2
 			for(int i=1;i<(line.size()-2);i++){
-				if(line[i]=='s' &&line[i+1]=='p'&&(line[i-1]==' '||line[i-1]==',')&&(line[i+2]==' ' ||line[i+2]==','||line[i+2]=='\n')){
+				if(line[i]=='s' &&line[i+1]=='p'&&(line[i-1]==' '||line[i-1]==','||line[i-1]=='(')&&(line[i+2]==' ' ||line[i+2]==','||line[i+2]==')'||line[i+2]=='\n')){
 					line[i]='x';
 					line[i+1]='2';
 				}
@@ -121,7 +123,7 @@ int main(){
 				insType = 6;
 			}
 			else {
-				cout<<"!! Instuction not identified : "<<line<<endl;
+				cout<<"ERROR !! Instuction not identified : "<<line<<endl;
 				machineCode = bitset<32>(0);
 				insType = -1;
 			}
@@ -147,52 +149,31 @@ int main(){
 
 	decode.initialise();
 
-	int i = 0;
-	// Control
-	while(1){
-		i++;
-		fetch.get(isb);
-		if(isb.IR.readInt() == 0 || i > 10)
-			break;
-		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-//		isb.printAll();
-		decode.decoder(isb,rFile);
-//		isb.printAll();
-		alu.compute(isb);
-//		isb.printAll();
-		if(isb.isMem == true){
-				if(isb.insType == 4){
-					memAccess.writeMem(isb);
-					muxy.MUX_Y_SELECT = 1;
-				}
-				else {
-					memAccess.readMem(isb);
-					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
+	if(!isb.enablePipe){
+		int i = 0;
+		while(1){
+			i++;
+			fetch.get(isb);
+			if(isb.IR.readInt() == 0 || i > 200)
+				break;
 
-				}
-		}
-		else if(isb.isjalr == true || isb.insType == 5){
-			muxy.MUX_Y_SELECT = 3;
-		}
-		else
-			muxy.MUX_Y_SELECT = 1;
-//		isb.printAll();
-		isb.RY.writeInt(muxy.output(isb));
-//		isb.printAll();
-		
-		if(isb.write_back_location != -1){
-			regUpdate.update(isb,rFile, isb.write_back_location);
-		}
-//		rFile.print();
+		decode.decoder(isb,rFile);
+		alu.compute(isb);
+		memory(isb, memAccess, muxy);
+		writeBack(isb, regUpdate, rFile);
 		iag.step(isb,alu);
-//		isb.printAll();
 		isb.resetAll();
-//		isb.printAll();
-	}
+
+//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+		if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+		if(isb.printRegFile) rFile.print();
+		if(isb.printISB) isb.printAll();
+		}
 	
-	rFile.print();
-	cout<<"Code executed succesfully."<<endl;
-	// rFile.print();
+		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
+		cout<<" Final register values :\n";	
+		rFile.print();
+	}
 	return 0;
 }
 
@@ -216,4 +197,29 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 		}
 	}
 	iFile.close();
+}
+
+void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
+			if(isb.isMem == true){
+				if(isb.insType == 4){
+					memAccess.writeMem(isb);
+					muxy.MUX_Y_SELECT = 1;
+				}
+				else {
+					memAccess.readMem(isb);
+					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
+				}
+		}
+		else if(isb.isjalr == true || isb.insType == 5){
+			muxy.MUX_Y_SELECT = 3;
+		}
+		else
+			muxy.MUX_Y_SELECT = 1;
+		isb.RY.writeInt(muxy.output(isb));
+}
+
+void writeBack(InterStateBuffers &isb, RegUpdate &regUpdate, Registry_File &rFile){
+	if(isb.write_back_location != -1){
+			regUpdate.update(isb,rFile, isb.write_back_location);
+		}
 }

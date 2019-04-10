@@ -14,6 +14,9 @@ public:
 		for (int i = 0;i<REG_WIDTH;i++) {
 			registers.push_back(0);
 		}
+
+		registers[2] = 200000; // INTIAL VALUE OF STACK POINTER
+
 	}
 
 	void writeInt(int index, int value) {
@@ -21,7 +24,7 @@ public:
 	}
 
 	int readInt( int index ) {
-		return registers[index].to_ulong();
+		return registers[index].to_ulong();		
 	}
 
 	void writeBits (int index , bitset <REG_WIDTH> value) {
@@ -34,8 +37,11 @@ public:
 
 	void print () {
 		cout << "###### Registry File ######"  <<endl;
-		for (int i = 0;i<32;i++) {
-			cout << i << "-" << registers[i].to_ulong() << endl; 
+		for (int i = 0;i<32;i+=4) {
+			cout <<"Reg "<<i << " - " << registers[i].to_ulong() << "\t";
+			cout <<"Reg "<<i+1 << " - " << registers[i+1].to_ulong() << "\t";
+			cout <<"Reg "<<i+2 << " - " << registers[i+2].to_ulong() << "\t";
+			cout <<"Reg "<<i+3 << " - " << registers[i+3].to_ulong() << endl; 
 		}
 		cout<< "############################"<<endl;
 	}

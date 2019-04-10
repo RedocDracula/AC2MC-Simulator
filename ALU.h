@@ -38,6 +38,14 @@ class ALU {
 			result = RA * RB;
 			object.RZ.writeInt(result);
 		}
+		else if(ins == "div"){
+			result = RA / RB;
+			object.RZ.writeInt(result);
+		}
+		else if(ins == "rem"){
+			result = RA % RB;
+			object.RZ.writeInt(result);
+		}
 		else if(ins == "and"){
 			result = RA & RB;
 			object.RZ.writeInt(result);
