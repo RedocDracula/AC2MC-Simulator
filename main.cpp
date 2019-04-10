@@ -18,6 +18,7 @@
 #include"RegUpdate.h"
 #include"MemoryAccess.h"
 #include"InterStateBuffers.h"
+#include"Assembler.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ int main(){
 
 	int insType;
 	
-	string inputFileName = "input.txt";
+	string inputFileName = "input1.txt";
 	string outputFileName = "machineCode.txt";
 	string basicCodeFileName = "basicCode.txt";
 
@@ -56,15 +57,29 @@ int main(){
 	uTypeInsObj.initialise(dir + "UType.txt");
 
 
-	//Find All Labels in the input file
-	findLabels(inputFileName,labelNames,labelLineNumber);	
-	
+	Registry_File rFile;
+	Fetch fetch;
+	MUX_Y muxy;
+	Decode decode;
+	MemoryAccess memAccess;
+	RegUpdate regUpdate;
+	ALU alu;
+	IAG iag;
+
+	assembler_initiate(memAccess);
+
+		
 	ifstream iFile(inputFileName.c_str());
 	ofstream oFile(outputFileName.c_str());
 	ofstream oFile2(basicCodeFileName.c_str());
 
+	
+	//Find All Labels in the input file
+	findLabels(inputFileName,labelNames,labelLineNumber);	
+
 	if(!iFile.is_open()) cout<<"Error in reading input file";
 	else{
+
 		int lineNo=0;
 		bitset<32> machineCode;
 		string line;
@@ -137,16 +152,6 @@ int main(){
 	oFile.close();
 	oFile2.close();
 
-	Registry_File rFile;
-	Fetch fetch;
-	MUX_Y muxy;
-	Decode decode;
-	MemoryAccess memAccess;
-	RegUpdate regUpdate;
-	ALU alu;
-	IAG iag;
-	
-
 	decode.initialise();
 
 	if(!isb.enablePipe){
@@ -154,7 +159,7 @@ int main(){
 		while(1){
 			i++;
 			fetch.get(isb);
-			if(isb.IR.readInt() == 0 || i > 200)
+			if(isb.IR.readInt() == 0 || i > 2000)
 				break;
 
 		decode.decoder(isb,rFile);
