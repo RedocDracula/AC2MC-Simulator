@@ -155,6 +155,7 @@ int main(){
 
 	decode.initialise();
 
+// If pipeline is disabled
 	if(!isb.enablePipe){
 		int i = 0;
 		while(1){
@@ -174,6 +175,80 @@ int main(){
 		if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
 		if(isb.printRegFile) rFile.print();
 		if(isb.printISB) isb.printAll();
+		}
+	
+		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
+		cout<<" Final register values :\n";	
+		rFile.print();
+	}
+
+// If pipeline is enabled
+	if(isb.enablePipe){
+		bool end = false;
+		int i = 0,j=0;
+		while(1){
+			i++;
+			if(end)
+				j++;
+			if(j >= 4|| i > 2000)
+				break;
+
+			
+			if(i==1){
+				if(!end){
+					fetch.get(isb);
+					iag.update(isb);
+				}
+			}
+			else if(i==2) {
+				decode.decoder(isb,rFile);
+				if(!end){
+					isb.writeBackLocQ.push_back(isb.write_back_location);
+					fetch.get(isb);
+					iag.update(isb);
+				}
+			}
+			else if(i==3) {
+				alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(!end){
+					isb.writeBackLocQ.push_back(isb.write_back_location);
+					fetch.get(isb);
+					iag.update(isb);
+				}			
+			}
+			else if(i==4) {
+				memory(isb, memAccess, muxy);
+				alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(!end){
+					isb.writeBackLocQ.push_back(isb.write_back_location);
+					fetch.get(isb);
+					iag.update(isb);
+				}
+				isb.write_back_location = isb.writeBackLocQ.front();
+				isb.writeBackLocQ.pop_front();
+			}
+			else{
+				writeBack(isb, regUpdate, rFile);
+				memory(isb, memAccess, muxy);
+				alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(!end){
+					isb.writeBackLocQ.push_back(isb.write_back_location);
+					fetch.get(isb);
+					iag.update(isb);
+				}
+				isb.write_back_location = isb.writeBackLocQ.front();
+				isb.writeBackLocQ.pop_front();
+			}
+			if(isb.IR.readInt() == 0 )
+				end = true;
+
+//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+			if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+			if(isb.printRegFile) rFile.print();
+			if(isb.printISB) isb.printAll();
 		}
 	
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;

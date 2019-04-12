@@ -2,6 +2,7 @@
 #include <iostream>
 #include <bitset>
 #include <string>
+#include <deque> 
 #define registerWidth 32
 using namespace std;
 
@@ -50,6 +51,9 @@ class InterStateBuffers{
 		//-1 for SB type where no write back occurs.
 		int write_back_location;
 
+		//Write back queue
+		deque<int> writeBackLocQ;
+
 		//inserting knobs as bool types, specification given with each knob
 		//take in the value at runtime or hardcode it for development purposes
 
@@ -71,12 +75,13 @@ class InterStateBuffers{
 			pc_offset = 0;
 			isjalr = false;
 			isMem = false;
+			write_back_location = -1;
 
-		 enablePipe = false;
-		 enableDF = false; 
-		 printRegFile = false;
-		 printISB = false;
-		 printISBspecific = false;
+			enablePipe = true;
+			enableDF = false; 
+			printRegFile = false;
+			printISB = false;
+			printISBspecific = false;
 
 		}
 
