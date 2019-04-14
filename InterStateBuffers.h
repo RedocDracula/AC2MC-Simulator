@@ -53,6 +53,11 @@ class InterStateBuffers{
 		int branch_address_def;
 		int branch_address;
 
+		int insTypeD,insTypeE,insTypeM,insTypeW;
+		int isjalrD,isjalrE,isjalrM,isjalrW;
+		int wblocD,wblocE,wblocM,wblocW;
+		int isMemD,isMemE,isMemM,isMemW;
+
 
 
 
@@ -61,14 +66,6 @@ class InterStateBuffers{
 		//-1 for SB type where no write back occurs.
 		int write_back_location;
 
-		//Write back queue
-		deque<int> writeBackLocQ;
-		//isMem queue
-		deque<bool> isMemQ;
-		//insType queue
-		deque<int> insTypeQ;
-		//isjalr queue
-		deque<bool> isjalrQ;
 
 		//inserting knobs as bool types, specification given with each knob
 		//take in the value at runtime or hardcode it for development purposes
@@ -99,7 +96,7 @@ class InterStateBuffers{
 			printISB = true;
 			printISBspecific = false;
 			stall  = false;
-			hazardType = 0;
+			hazard_type = 0;
 		}
 
 		void resetAll(){

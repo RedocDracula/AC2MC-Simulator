@@ -84,7 +84,7 @@ void  assembler_initiate(MemoryAccess &memobject)
                 }
                 
                 for(int i=0; i < data.size(); i++){
-                    memobject.writeMem(address,data[i]);
+                    memobject.writeWord(address,data[i]); //Word $$$$$
                     address += 4;
                 }
             }

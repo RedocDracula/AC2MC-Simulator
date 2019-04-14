@@ -62,7 +62,10 @@ class Decode{
         rs2 = 0;
         rd = 0;
 
-        int insType = ibs.insType;
+       
+				int insType;
+				if(!ibs.enablePipe) insType = ibs.insType;
+				else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
 
 

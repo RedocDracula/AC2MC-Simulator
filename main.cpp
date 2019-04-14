@@ -26,8 +26,8 @@ void findLabels(string,vector<string>&,vector<int>&);
 void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
 void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 void print(int i, InterStateBuffers &, Registry_File &);
-void pushValISB(InterStateBuffers &);
-void popValISB(InterStateBuffers &);
+void printD(InterStateBuffers &);
+void updateISB(InterStateBuffers &);
 
 int main(){
 
@@ -198,43 +198,35 @@ int main(){
 				if(!end){
 					fetch.get(isb);
 					iag.update(isb);
+					isb.insTypeD = isb.insType;
 				}
 			}
 			else if(i==2) {
 				decode.decoder(isb,rFile);
 				if(!end){
-					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
+					updateISB(isb);
 			}
 			else if(i==3) {
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
-					isb.isMem = isb.isMemQ.front();
-					isb.isMemQ.pop_front();
-
-					isb.insType = isb.insTypeQ.front();
-					isb.insTypeQ.pop_front();
-
-					isb.isjalr = isb.isjalrQ.front();
-					isb.isjalrQ.pop_front();
+				updateISB(isb);
 			}
 			else if(i==4) {
 				memory(isb, memAccess, muxy);
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
-				popValISB(isb);
+				updateISB(isb);
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
@@ -242,17 +234,16 @@ int main(){
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
-				popValISB(isb);
+				updateISB(isb);
 			}
 			if(isb.IR.readInt() == 0 )
 				end = true;
 			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
-	
+	//	printD(isb);
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
 		cout<<" Final register values :\n";	
 		rFile.print();
@@ -283,13 +274,14 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 }
 
 void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
+	if(!isb.enablePipe){
 			if(isb.isMem == true){
 				if(isb.insType == 4){
-					memAccess.writeMem(isb);
+					memAccess.writeWord(isb);
 					muxy.MUX_Y_SELECT = 1;
 				}
 				else {
-					memAccess.readMem(isb);
+					memAccess.readWord(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 				}
 		}
@@ -299,33 +291,60 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 		else
 			muxy.MUX_Y_SELECT = 1;
 		isb.RY.writeInt(muxy.output(isb));
+	}
+	else{
+		if(isb.isMemM == true){
+				if(isb.insTypeM == 4){
+					memAccess.writeWord(isb);
+					muxy.MUX_Y_SELECT = 1;
+				}
+				else {
+					memAccess.readWord(isb);
+					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
+				}
+		}
+		else if(isb.isjalrM == true || isb.insTypeM == 5){
+			muxy.MUX_Y_SELECT = 3;
+		}
+		else
+			muxy.MUX_Y_SELECT = 1;
+		isb.RY.writeInt(muxy.output(isb));
+	}
 }
 
 void writeBack(InterStateBuffers &isb, RegUpdate &regUpdate, Registry_File &rFile){
-	if(isb.write_back_location != -1){
+	if(!isb.enablePipe){
+		if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
+	}
+	else{
+		if(isb.wblocW != -1){
+			regUpdate.update(isb,rFile, isb.wblocW);
+		}
+	}
 }
 
-void pushValISB(InterStateBuffers &isb){
-	isb.writeBackLocQ.push_back(isb.write_back_location);
-	isb.isMemQ.push_back(isb.isMem);
-	isb.insTypeQ.push_back(isb.insType);
-	isb.isjalrQ.push_back(isb.isjalr);
-}
+void updateISB(InterStateBuffers &isb){
+	isb.wblocD = isb.write_back_location;
+	isb.wblocE = isb.wblocD;
+	isb.wblocM = isb.wblocE;
+	isb.wblocW = isb.wblocM;
 
-void popValISB(InterStateBuffers &isb){
-	isb.write_back_location = isb.writeBackLocQ.front();
-	isb.writeBackLocQ.pop_front();
+	isb.insTypeD = isb.insType;
+	isb.insTypeE = isb.insTypeD;
+	isb.insTypeM = isb.insTypeE;
+	isb.insTypeW = isb.insTypeM;
 
-	isb.isMem = isb.isMemQ.front();
-	isb.isMemQ.pop_front();
+	isb.isjalrD = isb.isjalr;
+	isb.isjalrD = isb.isjalr;
+	isb.isjalrD = isb.isjalr;
+	isb.isjalrD = isb.isjalr;
 
-	isb.insType = isb.insTypeQ.front();
-	isb.insTypeQ.pop_front();
-
-	isb.isjalr = isb.isjalrQ.front();
-	isb.isjalrQ.pop_front();
+	isb.isMemD = isb.isMem;
+	isb.isMemE = isb.isMemD;
+	isb.isMemM = isb.isMemE;
+	isb.isMemW = isb.isMemM;
 }
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
@@ -333,4 +352,21 @@ void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
+}
+
+void printD(InterStateBuffers &isb){
+	cout<<"///////////////////////////////////////////////////////////////\n\n";
+	cout<<" wbloc : "<<isb.write_back_location<<"\t"<<"isMem : "<<isb.isMem<<endl;
+	cout<<" wblocD : "<<isb.wblocD<<"\t"<<"isMemD : "<<isb.isMemD<<endl;
+	cout<<" wblocE : "<<isb.wblocE<<"\t"<<"isMemE : "<<isb.isMemE<<endl;
+	cout<<" wblocM : "<<isb.wblocM<<"\t"<<"isMemM : "<<isb.isMemM<<endl;
+	cout<<" wblocW : "<<isb.wblocW<<"\t"<<"isMemW : "<<isb.isMemW<<endl<<endl;
+
+	cout<<" insType : "<<isb.insType<<"\t"<<"isjalr : "<<isb.isjalr<<endl;
+	cout<<" insTypeD : "<<isb.insTypeD<<"\t"<<"isjalrD : "<<isb.isjalrD<<endl;
+	cout<<" insTypeE : "<<isb.insTypeE<<"\t"<<"isjalrE : "<<isb.isjalrE<<endl;
+	cout<<" insTypeM : "<<isb.insTypeM<<"\t"<<"isjalrM : "<<isb.isjalrM<<endl;
+	cout<<" insTypeW : "<<isb.insTypeW<<"\t"<<"isjalrW : "<<isb.isjalrW<<endl;	
+
+	cout<<"///////////////////////////////////////////////////////////////\n";
 }

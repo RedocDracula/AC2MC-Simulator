@@ -51,7 +51,7 @@ public:
 	void writeWord(InterStateBuffers &isb) { // WRITES RM value to RZ index
 
 		bitset <8> byte1,byte2,byte3,byte4;
-		bitset <32> source = isb.RM.readBits();
+		bitset <32> source = isb.RM.readBitset();
 		int index = isb.RZ.readInt();  
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
 		
@@ -62,6 +62,22 @@ public:
 		MEM [index + 3] = byte4;
 		
 	}
+
+		void writeWord(int address, int data ) { // WRITES RM value to RZ index
+		
+		bitset <8> byte1,byte2,byte3,byte4;
+		bitset <32> source = data;
+		int index = address;  
+		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
+		
+		// Write to its position
+		MEM [index + 0] = byte1;
+		MEM [index + 1] = byte2;
+		MEM [index + 2] = byte3;
+		MEM [index + 3] = byte4;
+		
+	}
+
 
 	void readWord (InterStateBuffers & isb ) {  //INDEX at RZ , WRITE to isb.mem_register
 		bitset <BYTE> byte1, byte2, byte3, byte4; 	
@@ -75,7 +91,7 @@ public:
 
 		unite (output, byte1, byte2, byte3, byte4);
 
-		isb.mem_register = output;
+		isb.mem_register = bitsetRead(output);
 	}
 
 	void writeByte ( InterStateBuffers & isb ) { // WRITES RM value to RZ index
@@ -102,7 +118,7 @@ public:
 		for (int i = 0;i<8;i++) {
 			output[i] = byte[i];
 		}
-		isb.mem_register = output;
+		isb.mem_register = bitsetRead(output);
 	}
 
 

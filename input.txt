@@ -1,22 +1,4 @@
-<<<<<<< HEAD
-addi x3,x0,5
-addi sp,sp,-1
-sw x3,0(sp)
-addi x3,x0,10
-lw x3,0(sp)
-addi sp,sp,1
-=======
-addi x3,x0,3
-<<<<<<< HEAD
-sw x3,0(x2)
-addi x5, x3, 9
-add x6, x3, x5
-lw x7, 0(x2)
->>>>>>> 824371c9887122bb36838c235bbf2346e256a952
-=======
 addi x4,x0,4
-addi x5,x0,5
-sw x4,0(x2)
-addi x4,x0,2
-lw x4,0(x2)
->>>>>>> 721f1ce9563c337cd4c00b364b23395382035542
+addi x3,x0,3
+addi x6,x0,6
+addi x4,x0,1
