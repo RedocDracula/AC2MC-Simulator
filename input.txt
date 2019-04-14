@@ -1,5 +1,8 @@
 addi x3,x0,3
 addi x4,x0,4
-addi x5,x0,5
 sw x4,0(x2)
-lw x5,0(x2)
+addi x4,x0,9
+addi x5,x0,5
+addi x6,x0,6
+lw x4,0(x2)
+add x11,x0,x4

@@ -152,7 +152,11 @@ class InterStateBuffers{
 			cout<<"\tisjalr\t:\t"<<isjalr<<endl;
 			cout<<"\tmem_register\t:\t"<<mem_register<<endl;
 			cout<<"\treturn_address\t:\t"<<return_address<<endl;
+			cout<<"\tbranch_address_def\t:\t"<<branch_address_def<<endl;
+			cout<<"\tbranch_address\t:\t"<<branch_address<<endl;
+			cout<<"\thazard_type\t:\t"<<hazard_type<<endl;
 			cout<<"\twrite_back_location\t:\t"<<write_back_location<<endl;
+			cout<<"\tmis prediction\t:\t"<<isMispred<<endl;
 			cout<<"*************************************************\n";
 
 		}

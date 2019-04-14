@@ -28,7 +28,7 @@ class Fetch {
 		InterStateBuffers * buf;
 		map <int , int> itype_map;
 		
-		int hazardType = 0;
+		int hazardType;
 		bitset <REG_WIDTH > branch_address;
 		bitset <REG_WIDTH > branch_address_def;
 		
@@ -47,14 +47,14 @@ class Fetch {
 			return 3;
 		} else if (buf.insType == 5 ) {
 			return  1;
-		} else if (temp.to_ulong() == 103 ) {
+		} else if (opcode.to_ulong() == 103 ) {
 			return 2;
 		} else {
 			return 0;
 		}	
 	}
 
-	void setBrachAddress (InterStateBuffers & buf) {
+	void setBrachAddress (InterStateBuffers & buf , Registry_File reg) {
 		bitset <20> imm2;
 		bitset <12> imm;
 		bitset <12> imm1;
@@ -79,10 +79,9 @@ class Fetch {
                 imm[i] = IR[20+i];
             }
             for(int i=0; i<5; i++){
-                rs1[i] = IR[15];
+                rs1[i] = IR[15+i];
             }
-			int regLocation = bitsetRead(imm) + bitsetRead(rs1); 
-            branch_address = mem_map[regLocation];
+						branch_address = bitsetRead(imm) + reg.readInt(bitsetRead(rs1));        
 		} else { 
 			// Branch Instructions
             imm1[10] = IR[7];
@@ -94,8 +93,8 @@ class Fetch {
                 imm1[i+4] = IR[25+i];
             }
             imm1[11] = IR[31]; //imm1 contains offset
-			branch_address = mem_map[bitsetRead(imm1) + buf.PC];
-			branch_address_def = buf.PC + 4; //  
+			branch_address = bitsetRead(imm1) + buf.PC;
+			branch_address_def = buf.PC + 1; //  
 		}
 	
 	}
@@ -133,16 +132,15 @@ class Fetch {
 		buf.branch_address_def = getDefBrachAddress(); 
 	}
 	
-	void get(InterStateBuffers & buf) {
+	void get(InterStateBuffers & buf, Registry_File regs) {
 		buf.IR.writeBitset ( mem_map[buf.PC]);
 		buf.insType = itype_map[ buf.PC ]; // Instype and new intructions fetch completed
 		 
 		if (buf.enablePipe) {
-			int hazardType = detectControlHazards(buf);
-			if (hazardType != 0) {
-				setBrachAddress(buf);
-				updateBuffer(buf);
-			}
+			hazardType = detectControlHazards(buf);
+			setBrachAddress(buf, regs);
+			updateBuffer(buf);
+			
 		}
 	}
 

@@ -69,9 +69,6 @@ class Decode{
 		else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
 
-		cout<<"$$$$$$ insTypeDecoder : "<<insType<<endl;
-
-
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
             for(int i=0;i<7;i++){
@@ -242,10 +239,8 @@ class Decode{
         //Feeding buffer RA
 
         if(locA == pWrite && pWrite!=0 && ibs.enablePipe == true){
-            cout<<"INSIDE IF"<<endl;
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
-                cout<<"INSIDE SECOND IF"<<endl;
                 if(pInst == "lw" || pInst == "lb" || pInst == "lh"){
                     ibs.stall = true;
                 }
@@ -445,6 +440,7 @@ class Decode{
                 // Implement flush logic
                 // Put ba_def in PC
                 ibs.nextPC = ibs.branch_address_def;
+								cout<<" ^^^^^^^^ mis pred\n";
             }
             else if(ibs.taken == false && state == true){
                 ibs.mispredNumber++;
@@ -452,10 +448,12 @@ class Decode{
                 // Implement flush logic
                 // Put ba in PC
                 ibs.nextPC = ibs.branch_address;
+								cout<<" ^^^^^^^^ mis pred\n";
             }
             else{
                 //Sab sahi hai bero
                 ibs.isMispred = false;
+								cout<<" ^^^^^^^^ Sab sahi hai bero\n";
             }
 
         }
@@ -477,10 +475,6 @@ class Decode{
             relStr = relStr + "-1";
         }
         */
-
-        cout<<"INST TYPE: "<<insType<<endl;
-        cout<<"Prev Write   "<<pInst<<"     "<<pWrite<<endl;
-        cout<<"PrevPrev Write   "<<ppInst<<"     "<<ppWrite<<endl;
 
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){

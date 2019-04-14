@@ -164,7 +164,7 @@ int main(){
 		int i = 0;
 		while(1){
 			i++;
-			fetch.get(isb);
+			fetch.get(isb,rFile);
 			if(isb.IR.readInt() == 0 || i > 2000)
 				break;
 
@@ -185,53 +185,97 @@ int main(){
 
 // If pipeline is enabled
 	if(isb.enablePipe){
-		bool end = false;
+		bool end = false, skipExecute = false;
 		int i = 0,j=0;
 		while(1){
 			i++;
+			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 2000)
+			if(j >= 4|| i > 50)
 				break;
 
 			
 			if(i==1){
 				if(!end){
-					fetch.get(isb);
+					fetch.get(isb,rFile);
 					printD(isb);
-					iag.update(isb);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
 				}
 				updateISB(isb);
 			}
 			else if(i==2) {
 				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					continue;
+				}
 				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
-					fetch.get(isb);
-					iag.update(isb);
+					fetch.get(isb,rFile);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
 				}
 					printD(isb);
 					updateISB(isb);
 			}
 			else if(i==3) {
-				alu.compute(isb);
+				if(!isb.stall)alu.compute(isb);
 				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					continue;
+				}
 				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
-					fetch.get(isb);
-					iag.update(isb);
+					fetch.get(isb,rFile);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
 				}
 				printD(isb);
 				updateISB(isb);
 			}
 			else if(i==4) {
 				memory(isb, memAccess, muxy);
-				alu.compute(isb);
+				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					continue;
+				}
 				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
-					fetch.get(isb);
-					iag.update(isb);
+					fetch.get(isb,rFile);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
 				}
 				printD(isb);
 				updateISB(isb);
@@ -239,12 +283,26 @@ int main(){
 			else{
 				writeBack(isb, regUpdate, rFile);
 				memory(isb, memAccess, muxy);
-				alu.compute(isb);
+				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					continue;
+				}
 				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
-					fetch.get(isb);
-					iag.update(isb);
+					fetch.get(isb,rFile);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
 				}
 				printD(isb);
 				updateISB(isb);
@@ -355,8 +413,9 @@ void updateISB(InterStateBuffers &isb){
 }
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
-	//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
 }
@@ -368,7 +427,7 @@ void updateAfterDecoder(InterStateBuffers &isb){
 }
 
 void printD(InterStateBuffers &isb){
-	cout<<"///////////////////////////////////////////////////////////////\n\n";
+/*	cout<<"///////////////////////////////////////////////////////////////\n\n";
 	cout<<" wbloc : "<<isb.write_back_location<<"\t"<<"isMem : "<<isb.isMem<<endl;
 	cout<<" wblocD : "<<isb.wblocD<<"\t"<<"isMemD : "<<isb.isMemD<<endl;
 	cout<<" wblocE : "<<isb.wblocE<<"\t"<<"isMemE : "<<isb.isMemE<<endl;
@@ -382,4 +441,5 @@ void printD(InterStateBuffers &isb){
 	cout<<" insTypeW : "<<isb.insTypeW<<"\t"<<"isjalrW : "<<isb.isjalrW<<endl;	
 
 	cout<<"///////////////////////////////////////////////////////////////\n";
+*/
 }
