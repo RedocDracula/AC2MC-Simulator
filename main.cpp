@@ -42,7 +42,7 @@ int main(){
 
 	int insType;
 	
-	string inputFileName = "input1.txt";
+	string inputFileName = "input.txt";
 	string outputFileName = "machineCode.txt";
 	string basicCodeFileName = "basicCode.txt";
 
@@ -66,10 +66,10 @@ int main(){
 	ALU alu;
 	IAG iag;
 
-	assembler_initiate(memAccess);
+//	assembler_initiate(memAccess);
 
 		
-	ifstream iFile(inputFileName.c_str());
+	ifstream iFile(inputFileName.c_str(), ios :: in);
 	ofstream oFile(outputFileName.c_str());
 	ofstream oFile2(basicCodeFileName.c_str());
 

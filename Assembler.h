@@ -130,5 +130,6 @@ void  assembler_initiate(MemoryAccess &memobject)
 
     ofile.close();
     ifile.close();
+    cout<<" processended!"<<endl;
     
 }
