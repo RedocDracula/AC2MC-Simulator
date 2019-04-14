@@ -28,6 +28,7 @@ void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 void print(int i, InterStateBuffers &, Registry_File &);
 void printD(InterStateBuffers &);
 void updateISB(InterStateBuffers &);
+void updateAfterDecoder(InterStateBuffers &);
 
 int main(){
 
@@ -197,35 +198,42 @@ int main(){
 			if(i==1){
 				if(!end){
 					fetch.get(isb);
+					printD(isb);
 					iag.update(isb);
-					isb.insTypeD = isb.insType;
 				}
+				updateISB(isb);
 			}
 			else if(i==2) {
 				decode.decoder(isb,rFile);
+				updateAfterDecoder(isb);
 				if(!end){
 					fetch.get(isb);
 					iag.update(isb);
 				}
+					printD(isb);
 					updateISB(isb);
 			}
 			else if(i==3) {
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
+				updateAfterDecoder(isb);
 				if(!end){
 					fetch.get(isb);
 					iag.update(isb);
 				}
+				printD(isb);
 				updateISB(isb);
 			}
 			else if(i==4) {
 				memory(isb, memAccess, muxy);
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
+				updateAfterDecoder(isb);
 				if(!end){
 					fetch.get(isb);
 					iag.update(isb);
 				}
+				printD(isb);
 				updateISB(isb);
 			}
 			else{
@@ -233,17 +241,18 @@ int main(){
 				memory(isb, memAccess, muxy);
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
+				updateAfterDecoder(isb);
 				if(!end){
 					fetch.get(isb);
 					iag.update(isb);
 				}
+				printD(isb);
 				updateISB(isb);
 			}
 			if(isb.IR.readInt() == 0 )
 				end = true;
 			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
-	//	printD(isb);
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
 		cout<<" Final register values :\n";	
 		rFile.print();
@@ -326,25 +335,23 @@ void writeBack(InterStateBuffers &isb, RegUpdate &regUpdate, Registry_File &rFil
 }
 
 void updateISB(InterStateBuffers &isb){
-	isb.wblocD = isb.write_back_location;
-	isb.wblocE = isb.wblocD;
-	isb.wblocM = isb.wblocE;
 	isb.wblocW = isb.wblocM;
+	isb.wblocM = isb.wblocE;
+	isb.wblocE = isb.wblocD;
+	
 
-	isb.insTypeD = isb.insType;
-	isb.insTypeE = isb.insTypeD;
-	isb.insTypeM = isb.insTypeE;
 	isb.insTypeW = isb.insTypeM;
+	isb.insTypeM = isb.insTypeE;
+	isb.insTypeE = isb.insTypeD;
+	isb.insTypeD = isb.insType;
 
-	isb.isjalrD = isb.isjalr;
-	isb.isjalrD = isb.isjalr;
-	isb.isjalrD = isb.isjalr;
-	isb.isjalrD = isb.isjalr;
+	isb.isjalrW = isb.isjalrM;
+	isb.isjalrM = isb.isjalrE;
+	isb.isjalrE = isb.isjalrD;
 
-	isb.isMemD = isb.isMem;
-	isb.isMemE = isb.isMemD;
-	isb.isMemM = isb.isMemE;
 	isb.isMemW = isb.isMemM;
+	isb.isMemM = isb.isMemE;
+	isb.isMemE = isb.isMemD;
 }
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
@@ -352,6 +359,12 @@ void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
+}
+
+void updateAfterDecoder(InterStateBuffers &isb){
+	isb.wblocD = isb.write_back_location;
+	isb.isjalrD = isb.isjalr;
+	isb.isMemD = isb.isMem;
 }
 
 void printD(InterStateBuffers &isb){

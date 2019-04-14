@@ -68,6 +68,8 @@ class Decode{
 				else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
 
+				cout<<"$$$$$$ insTypeDecoder : "<<insType<<endl;
+
 
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |

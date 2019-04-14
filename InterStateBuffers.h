@@ -97,6 +97,27 @@ class InterStateBuffers{
 			printISBspecific = false;
 			stall  = false;
 			hazard_type = 0;
+
+			wblocW = -1;
+			wblocM = -1;
+			wblocE = -1;
+			wblocD = -1;
+	
+
+			insTypeW = -1;
+			insTypeM = -1;
+			insTypeE = -1;
+			insTypeD = -1;
+
+			isjalrW = 0;
+			isjalrM = 0;
+			isjalrE = 0;
+			isjalrD = 0;
+
+			isMemW = 0;
+			isMemM = 0;
+			isMemE = 0;
+			isMemD = 0;
 		}
 
 		void resetAll(){
