@@ -59,7 +59,9 @@ class InterStateBuffers{
 		int isMemD,isMemE,isMemM,isMemW;
 
 		bool taken;
-		int mispreds;
+		int mispredNumber;
+		bool isMispred;
+		int nextPC;
 
 
 
@@ -123,7 +125,9 @@ class InterStateBuffers{
 			isMemD = 0;
 
 			taken = true;
-			mispreds = 0;
+			mispredNumber = 0;
+			isMispred = false;
+			nextPC = 0;
 		}
 
 		void resetAll(){

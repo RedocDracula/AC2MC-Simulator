@@ -424,13 +424,17 @@ class Decode{
             }
 
             if(ibs.taken == true && state == false){
-                ibs.mispreds++;
+                ibs.mispredNumber++;
                 // Implement flush logic
+                // Put ba_def in PC
+                ibs.nextPC = ibs.branch_address_def;
             }
 
             if(ibs.taken == false && state == true){
-                ibs.mispreds++;
+                ibs.mispredNumber++;
                 // Implement flush logic
+                // Put ba in PC
+                ibs.nextPC = ibs.branch_address;
             }
 
             

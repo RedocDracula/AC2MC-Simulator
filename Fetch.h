@@ -137,7 +137,7 @@ class Fetch {
 		buf.IR.writeBitset ( mem_map[buf.PC]);
 		buf.insType = itype_map[ buf.PC ]; // Instype and new intructions fetch completed
 		 
-		if (buf.enablePipe && false) {
+		if (buf.enablePipe) {
 			int hazardType = detectControlHazards(buf);
 			if (hazardType != 0) {
 				setBrachAddress(buf);
