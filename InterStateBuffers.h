@@ -49,6 +49,14 @@ class InterStateBuffers{
 		// For stalling
 		bool stall;
 
+		int hazard_type; /* 0 No Branch , 1 Jal ,  2 Jalr ,3 branch */
+		int branch_address_def;
+		int branch_address;
+
+
+
+
+
 		//Write back location:- stores register number for writeback, 
 		//-1 for SB type where no write back occurs.
 		int write_back_location;
@@ -85,7 +93,7 @@ class InterStateBuffers{
 			printISB = true;
 			printISBspecific = false;
 			stall  = false;
-
+			hazardType = 0;
 		}
 
 		void resetAll(){

@@ -28,11 +28,11 @@ class Fetch {
 		InterStateBuffers * buf;
 		map <int , int> itype_map;
 		
-		// Dump these three to ISB
 		int hazardType = 0;
 		bitset <REG_WIDTH > branch_address;
 		bitset <REG_WIDTH > branch_address_def;
 		
+	
 
 	int detectControlHazards(InterStateBuffers & buf) { //Return 0 for Ok, 1 jal , jalr 2  , 3 for branch
 		bitset <REG_WIDTH > temp;
@@ -54,7 +54,7 @@ class Fetch {
 		}	
 	}
 
-	void returnBrachAddress (InterStateBuffers & buf) {
+	void setBrachAddress (InterStateBuffers & buf) {
 		bitset <20> imm2;
 		bitset <12> imm;
 		bitset <12> imm1;
@@ -101,6 +101,18 @@ class Fetch {
 	}
 
 	public:
+	int getHazardType () {
+		return hazardType; 
+	}
+
+	int getBrachAddress () {
+		return bitsetRead(branch_address);
+	}
+	int getDefBrachAddress () {
+		return bitsetRead(branch_address_def);
+	}
+
+
 	Fetch() {
 		ifstream inpFile (MEM_SRC);
 		string line;
@@ -115,14 +127,22 @@ class Fetch {
 		
 	}
 	
+	void updateBuffer(InterStateBuffers & buf) {
+		buf.hazard_type = hazardType;
+		buf.branch_address = getBrachAddress();
+		buf.branch_address_def = getDefBrachAddress(); 
+	}
 	
 	void get(InterStateBuffers & buf) {
 		buf.IR.writeBitset ( mem_map[buf.PC]);
-		buf.insType = itype_map[ buf.PC ];
+		buf.insType = itype_map[ buf.PC ]; // Instype and new intructions fetch completed
 		 
-		int hazardType = detectControlHazards(buf);
-		if (hazardType != 0) {
-			returnBrachAddress(buf);
+		if (buf.enablePipe && false) {
+			int hazardType = detectControlHazards(buf);
+			if (hazardType != 0) {
+				setBrachAddress(buf);
+				updateBuffer(buf);
+			}
 		}
 	}
 
