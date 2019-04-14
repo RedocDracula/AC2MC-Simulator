@@ -24,6 +24,8 @@ class Decode{
     bool hasFunc7 = true;
     int pWrite;     // holds the write register value for the previous instruction
     int ppWrite;    // the instruction before that
+    string pInst;      // instruction
+    string ppInst;     // 
 
 
     // initialising function
@@ -62,13 +64,12 @@ class Decode{
         rs2 = 0;
         rd = 0;
 
-       
-				int insType;
-				if(!ibs.enablePipe) insType = ibs.insType;
-				else insType = ibs.insTypeD;
+		int insType;
+		if(!ibs.enablePipe) insType = ibs.insType;
+		else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
 
-				cout<<"$$$$$$ insTypeDecoder : "<<insType<<endl;
+		cout<<"$$$$$$ insTypeDecoder : "<<insType<<endl;
 
 
         if(insType == 1){
@@ -148,6 +149,7 @@ class Decode{
             ibs.write_back_location = -1;
         }
         if(insType == 4){
+            cout<<"S-TYPE DECODING"<<endl;
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
             // rs1 replaced by rd to symbolize reading on that register, rs2 replaced by rs1 to leave room for writing
             for(int i=0;i<7;i++){
@@ -244,11 +246,7 @@ class Decode{
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
                 cout<<"INSIDE SECOND IF"<<endl;
-                // for general instruction
                 ibs.RA.writeInt(ibs.RZ.readInt());
-
-                // for load instruction logic to be implemented
-                // Stall then next step. Then continue
             }
             // if only pipelining is true
             else{
@@ -299,6 +297,7 @@ class Decode{
                 }
             }
             else{
+                ibs.stall = false;
                 ibs.RB.writeInt(regFile.readInt(locB));
             }
         }
@@ -373,9 +372,68 @@ class Decode{
                 }
             }
             else{
+                ibs.stall = false;
                 ibs.RM.writeInt(regFile.readInt(locC));
-								cout<<"$$$$$$$$$$$$$$$$";
+				cout<<"$$$$$$$$$$$$$$$$";
             }
+        }
+
+        //Branch prediction checking
+        bool state;
+        if(insType == 3){
+            int ra = ibs.RA.readInt();
+            int rb = ibs.RB.readInt();
+            int rau;
+            int rbu;
+            if(ra >= 0){
+                rau = ra;
+            }
+            else{
+                rau = INT_MAX -ra;
+            }
+            if(rb >= 0){
+                rbu = rb;
+            }
+            else{
+                rbu = INT_MAX -rb;
+            }
+
+            if(relStr == "1100011000-1"){
+                // beq instruction
+                state = (ra == rb) ? 1 : 0;
+            }
+            if(relStr == "1100011001-1"){
+                // bne instruction
+                state = (ra != rb) ? 1 : 0;
+            }
+            if(relStr == "1100011100-1"){
+                // blt instruction
+                state = (ra < rb) ? 1 : 0;
+            }
+            if(relStr == "1100011101-1"){
+                // bge instruction
+                state = (ra >= rb) ? 1 : 0;
+            }
+            if(relStr == "1100011110-1"){
+                // bltu instruction
+                state = (rau < rbu) ? 1 : 0;
+            }
+            if(relStr == "1100011111-1"){
+                // bgeu instruction
+                state = (rau >= rbu) ? 1 : 0;
+            }
+
+            if(ibs.taken == true && state == false){
+                ibs.mispreds++;
+                // Implement flush logic
+            }
+
+            if(ibs.taken == false && state == true){
+                ibs.mispreds++;
+                // Implement flush logic
+            }
+
+            
         }
 
         /*
@@ -396,6 +454,10 @@ class Decode{
         }
         */
 
+        cout<<"INST TYPE: "<<insType<<endl;
+        cout<<"Prev Write   "<<pInst<<"     "<<pWrite<<endl;
+        cout<<"PrevPrev Write   "<<ppInst<<"     "<<ppWrite<<endl;
+
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
 					
@@ -408,6 +470,9 @@ class Decode{
                     ibs.isjalr = false;
                 }
 
+                ppInst = pInst;
+                pInst = instructionName[i];
+
                 if(instructionName[i] == "lb" || instructionName[i] == "lw" || instructionName[i] == "lh" || instructionName[i] == "ld" || instructionName[i] == "lbu" || instructionName[i] == "lhu" ||instructionName[i] == "lwu" ||  ibs.insType == 4){
                             ibs.isMem = true;
                     }
@@ -415,7 +480,6 @@ class Decode{
                             ibs.isMem = false;									
                 }
             }
-
 						
         }
 
@@ -423,6 +487,8 @@ class Decode{
 
         // Updating the previous write registers
         // if ibs.stall is activated, feed pWrite with 0 or insType == 4 ??
+
+
         ppWrite = pWrite;
         if(insType == 4){
             pWrite = 0;

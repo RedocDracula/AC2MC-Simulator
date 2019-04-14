@@ -58,6 +58,9 @@ class InterStateBuffers{
 		int wblocD,wblocE,wblocM,wblocW;
 		int isMemD,isMemE,isMemM,isMemW;
 
+		bool taken;
+		int mispreds;
+
 
 
 
@@ -118,6 +121,9 @@ class InterStateBuffers{
 			isMemM = 0;
 			isMemE = 0;
 			isMemD = 0;
+
+			taken = true;
+			mispreds = 0;
 		}
 
 		void resetAll(){
