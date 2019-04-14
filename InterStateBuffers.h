@@ -46,6 +46,8 @@ class InterStateBuffers{
 		int insType;
 		string ALU_OP;
 		bool isjalr, isMem;
+		// For stalling
+		bool stall;
 
 		//Write back location:- stores register number for writeback, 
 		//-1 for SB type where no write back occurs.
@@ -78,10 +80,11 @@ class InterStateBuffers{
 			write_back_location = -1;
 
 			enablePipe = true;
-			enableDF = false; 
-			printRegFile = false;
-			printISB = false;
+			enableDF = true; 
+			printRegFile = true;
+			printISB = true;
 			printISBspecific = false;
+			stall  = false;
 
 		}
 

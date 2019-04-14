@@ -211,15 +211,34 @@ class Decode{
         locB = rs2.to_ulong();
         locC = rd.to_ulong();
 
+        //Concatenated opcode func3 and func7 and checked for ALU_OP
+        string relStr;
+        relStr = opcode.to_string();
+        if(hasFunc3){
+            relStr = relStr + func3.to_string(); 
+            if(hasFunc7){
+                relStr = relStr + func7.to_string();
+            }
+            else{
+                relStr = relStr + "-1";
+            }
+        }
+        else{
+            relStr = relStr + "-1";
+        }
+
 				
         //Register file object will be passed and values will be read
         // MUX B Implementation
         //Uncomment the following lines once the register file has been created and update the names.
 
         //Feeding buffer RA
+
         if(locA == pWrite && pWrite!=0 && ibs.enablePipe == true){
+            cout<<"INSIDE IF"<<endl;
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
+                cout<<"INSIDE SECOND IF"<<endl;
                 // for general instruction
                 ibs.RA.writeInt(ibs.RZ.readInt());
 
@@ -228,20 +247,23 @@ class Decode{
             }
             // if only pipelining is true
             else{
-                // Stall the pipeline
+                // ibs.stall the pipeline
+                ibs.stall = true;
             }
         }
         else if(locA == ppWrite && ppWrite != 0 && ibs.enablePipe == true){
             if(ibs.enableDF == true){
                 // for general instruction, no load exceptions are here
-                ibs.RA.writeInt(ibs.RX.readInt());
+                ibs.RA.writeInt(ibs.RY.readInt());
             }
             // if only pipelining is true
             else{
-                // Stall the pipeline
+                // ibs.stall the pipeline
+                ibs.stall = true;
             }
         }
         else{
+            ibs.stall = false;
             ibs.RA.writeInt(regFile.readInt(locA));
         }
 
@@ -254,20 +276,21 @@ class Decode{
                 if(ibs.enableDF == true){
                     // for a general instruction
                     ibs.RB.writeInt(ibs.RZ.readInt());
-                    //Logic for load and stall not implemented yet
-                    // Stall then continue
+                    //Logic for load and ibs.stall not implemented yet
+                    // ibs.stall then continue
                 }
                 // if only pipelining is true
                 else{
-                    // Stall 
+                    // ibs.stall
+                    ibs.stall = true; 
                 }
             }
             else if(locB == ppWrite && pWrite != 0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    ibs.RB.writeInt(ibs.RX.readInt());
+                    ibs.RB.writeInt(ibs.RY.readInt());
                 }
                 else{
-                    //Stall
+                    ibs.stall = true;
                 }
             }
             else{
@@ -331,15 +354,17 @@ class Decode{
                     //load vaala logic not implemented yet
                 }
                 else{
-                    //Stall
+                    //ibs.stall
+                    ibs.stall = true;
                 }
             }
             else if(locC == ppWrite && ppWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    ibs.RM.writeInt(ibs.RX.readInt());
+                    ibs.RM.writeInt(ibs.RY.readInt());
                 }
                 else{
-                    //Stall
+                    //ibs.stall
+                    ibs.stall = true;
                 }
             }
             else{
@@ -347,7 +372,7 @@ class Decode{
             }
         }
 
-
+        /*
         //Concatenated opcode func3 and func7 and checked for ALU_OP
         string relStr;
         relStr = opcode.to_string();
@@ -363,6 +388,7 @@ class Decode{
         else{
             relStr = relStr + "-1";
         }
+        */
 
         //Updated ALU_OP
         for(int i=0;i<instructionName.size(); i++){
@@ -390,9 +416,14 @@ class Decode{
 				
 
         // Updating the previous write registers
-        // if stall is activated, feed pWrite with 0 or insType == 4 ??
+        // if ibs.stall is activated, feed pWrite with 0 or insType == 4 ??
         ppWrite = pWrite;
-        pWrite = locC;
+        if(insType == 4){
+            pWrite = 0;
+        }
+        else{
+            pWrite = locC;
+        }
         
     }
 };
