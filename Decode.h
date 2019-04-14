@@ -246,7 +246,13 @@ class Decode{
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
                 cout<<"INSIDE SECOND IF"<<endl;
-                ibs.RA.writeInt(ibs.RZ.readInt());
+                if(pInst == "lw" || pInst == "lb" || pInst == "lh"){
+                    ibs.stall = true;
+                }
+                else{
+                    ibs.stall = false;
+                    ibs.RA.writeInt(ibs.RZ.readInt());
+                }
             }
             // if only pipelining is true
             else{
@@ -257,6 +263,7 @@ class Decode{
         else if(locA == ppWrite && ppWrite != 0 && ibs.enablePipe == true){
             if(ibs.enableDF == true){
                 // for general instruction, no load exceptions are here
+                ibs.stall = false;
                 ibs.RA.writeInt(ibs.RY.readInt());
             }
             // if only pipelining is true
@@ -277,10 +284,13 @@ class Decode{
         if(insType == 1 || insType ==3){
             if(locB == pWrite && pWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    // for a general instruction
-                    ibs.RB.writeInt(ibs.RZ.readInt());
-                    //Logic for load and ibs.stall not implemented yet
-                    // ibs.stall then continue
+                    if(pInst == "lw" || pInst == "lb" || pInst == "lh"){
+                        ibs.stall = true;
+                    }
+                    else{
+                        ibs.stall = false;
+                        ibs.RB.writeInt(ibs.RZ.readInt());
+                    }
                 }
                 // if only pipelining is true
                 else{
@@ -290,6 +300,7 @@ class Decode{
             }
             else if(locB == ppWrite && pWrite != 0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
+                    ibs.stall = false;
                     ibs.RB.writeInt(ibs.RY.readInt());
                 }
                 else{
@@ -353,9 +364,13 @@ class Decode{
         if(insType == 4){
             if(locC == pWrite && pWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    // for a general instruction
-                    ibs.RM.writeInt(ibs.RZ.readInt());
-                    //load vaala logic not implemented yet
+                    if(pInst == "lw" || pInst == "lb" || pInst == "lh"){
+                        ibs.stall = true;
+                    }
+                    else{
+                        ibs.stall = false;
+                        ibs.RM.writeInt(ibs.RZ.readInt());
+                    }
                 }
                 else{
                     //ibs.stall
@@ -364,6 +379,7 @@ class Decode{
             }
             else if(locC == ppWrite && ppWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
+                    ibs.stall = false;
                     ibs.RM.writeInt(ibs.RY.readInt());
                 }
                 else{
@@ -442,7 +458,6 @@ class Decode{
                 ibs.isMispred = false;
             }
 
-            
         }
 
         /*
