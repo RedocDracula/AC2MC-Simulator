@@ -369,6 +369,7 @@ class Decode{
             }
             else{
                 ibs.RM.writeInt(regFile.readInt(locC));
+								cout<<"$$$$$$$$$$$$$$$$";
             }
         }
 

@@ -63,6 +63,12 @@ class InterStateBuffers{
 
 		//Write back queue
 		deque<int> writeBackLocQ;
+		//isMem queue
+		deque<bool> isMemQ;
+		//insType queue
+		deque<int> insTypeQ;
+		//isjalr queue
+		deque<bool> isjalrQ;
 
 		//inserting knobs as bool types, specification given with each knob
 		//take in the value at runtime or hardcode it for development purposes
@@ -111,14 +117,14 @@ class InterStateBuffers{
 			cout<<"********** Inter State Buffer Values ***********\n";
 			cout<<"\tRA\t:\t"<<RA.readInt()<<endl;
 			cout<<"\tRB\t:\t"<<RB.readInt()<<endl;
-			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
 			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
+			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
 			cout<<"\tpc_offset\t:\t"<<pc_offset<<endl;
 			cout<<"\tisjalr\t:\t"<<isjalr<<endl;
 			cout<<"\tmem_register\t:\t"<<mem_register<<endl;
-			cout<<"\treturn_address\t:\t"<<mem_register<<endl;
-			cout<<"\twrite_back_location\t:\t"<<mem_register<<endl;
+			cout<<"\treturn_address\t:\t"<<return_address<<endl;
+			cout<<"\twrite_back_location\t:\t"<<write_back_location<<endl;
 			cout<<"*************************************************\n";
 
 		}

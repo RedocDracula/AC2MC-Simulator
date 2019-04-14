@@ -25,6 +25,9 @@ using namespace std;
 void findLabels(string,vector<string>&,vector<int>&);
 void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
 void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
+void print(int i, InterStateBuffers &, Registry_File &);
+void pushValISB(InterStateBuffers &);
+void popValISB(InterStateBuffers &);
 
 int main(){
 
@@ -171,10 +174,7 @@ int main(){
 		iag.step(isb,alu);
 		isb.resetAll();
 
-//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-		if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-		if(isb.printRegFile) rFile.print();
-		if(isb.printISB) isb.printAll();
+		if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
 	
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
@@ -203,7 +203,7 @@ int main(){
 			else if(i==2) {
 				decode.decoder(isb,rFile);
 				if(!end){
-					isb.writeBackLocQ.push_back(isb.write_back_location);
+					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
@@ -212,22 +212,29 @@ int main(){
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					isb.writeBackLocQ.push_back(isb.write_back_location);
+					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
-				}			
+				}
+					isb.isMem = isb.isMemQ.front();
+					isb.isMemQ.pop_front();
+
+					isb.insType = isb.insTypeQ.front();
+					isb.insTypeQ.pop_front();
+
+					isb.isjalr = isb.isjalrQ.front();
+					isb.isjalrQ.pop_front();
 			}
 			else if(i==4) {
 				memory(isb, memAccess, muxy);
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					isb.writeBackLocQ.push_back(isb.write_back_location);
+					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
-				isb.write_back_location = isb.writeBackLocQ.front();
-				isb.writeBackLocQ.pop_front();
+				popValISB(isb);
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
@@ -235,20 +242,15 @@ int main(){
 				alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(!end){
-					isb.writeBackLocQ.push_back(isb.write_back_location);
+					pushValISB(isb);
 					fetch.get(isb);
 					iag.update(isb);
 				}
-				isb.write_back_location = isb.writeBackLocQ.front();
-				isb.writeBackLocQ.pop_front();
+				popValISB(isb);
 			}
 			if(isb.IR.readInt() == 0 )
 				end = true;
-
-//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-			if(isb.printRegFile || isb.printISB) cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-			if(isb.printRegFile) rFile.print();
-			if(isb.printISB) isb.printAll();
+			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
 	
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
@@ -303,4 +305,32 @@ void writeBack(InterStateBuffers &isb, RegUpdate &regUpdate, Registry_File &rFil
 	if(isb.write_back_location != -1){
 			regUpdate.update(isb,rFile, isb.write_back_location);
 		}
+}
+
+void pushValISB(InterStateBuffers &isb){
+	isb.writeBackLocQ.push_back(isb.write_back_location);
+	isb.isMemQ.push_back(isb.isMem);
+	isb.insTypeQ.push_back(isb.insType);
+	isb.isjalrQ.push_back(isb.isjalr);
+}
+
+void popValISB(InterStateBuffers &isb){
+	isb.write_back_location = isb.writeBackLocQ.front();
+	isb.writeBackLocQ.pop_front();
+
+	isb.isMem = isb.isMemQ.front();
+	isb.isMemQ.pop_front();
+
+	isb.insType = isb.insTypeQ.front();
+	isb.insTypeQ.pop_front();
+
+	isb.isjalr = isb.isjalrQ.front();
+	isb.isjalrQ.pop_front();
+}
+
+void print(int i, InterStateBuffers &isb, Registry_File &rFile){
+	//		cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+			if(isb.printRegFile) rFile.print();
+			if(isb.printISB) isb.printAll();
 }
