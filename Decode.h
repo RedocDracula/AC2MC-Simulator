@@ -425,16 +425,21 @@ class Decode{
 
             if(ibs.taken == true && state == false){
                 ibs.mispredNumber++;
+                ibs.isMispred = true;
                 // Implement flush logic
                 // Put ba_def in PC
                 ibs.nextPC = ibs.branch_address_def;
             }
-
-            if(ibs.taken == false && state == true){
+            else if(ibs.taken == false && state == true){
                 ibs.mispredNumber++;
+                ibs.isMispred = true;
                 // Implement flush logic
                 // Put ba in PC
                 ibs.nextPC = ibs.branch_address;
+            }
+            else{
+                //Sab sahi hai bero
+                ibs.isMispred = false;
             }
 
             
