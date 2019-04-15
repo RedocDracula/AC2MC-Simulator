@@ -70,10 +70,11 @@ class Fetch {
             for(int i=0; i<10; i++){
                 imm2[i] = IR[21+i];
             }
-            imm2[31] = IR[31];
+            imm2[19] = IR[31];
 			branch_address = bitsetRead(imm2) + buf.PC;  
-			branch_address_def = buf.PC + 1; 
-			cout<<" $$$$$$$$$$$$ branchADDRESS"<<branch_address<<endl;
+			branch_address_def = buf.PC + 1;
+			cout<<" $$$$$$$$$$$$ branchADDRESS"<<bitsetRead(branch_address)<<endl;
+			cout<<" $$$$$$$$$$$$ offset : "<<bitsetRead(imm2)<<endl;
 			
 		} else if (hazardType == 2) {
 			// jalr Instruction

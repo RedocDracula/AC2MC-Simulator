@@ -199,7 +199,6 @@ int main(){
 			if(i==1){
 				if(!end){
 					fetch.get(isb,rFile);
-					printD(isb);
 					if(!isb.hazard_type) iag.update(isb);
 					else iag.jumpPC(isb,isb.branch_address);
 				}
@@ -226,11 +225,11 @@ int main(){
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
 					fetch.get(isb,rFile);
+					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
 					else iag.jumpPC(isb,isb.branch_address);
 				}
-					printD(isb);
-					updateISB(isb);
+				if(end)	updateISB(isb);
 			}
 			else if(i==3) {
 				if(!isb.stall) alu.compute(isb);
@@ -254,11 +253,11 @@ int main(){
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
 					fetch.get(isb,rFile);
+					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
 					else iag.jumpPC(isb,isb.branch_address);
 				}
-				printD(isb);
-				updateISB(isb);
+				if(end)	updateISB(isb);
 			}
 			else if(i==4) {
 				memory(isb, memAccess, muxy);
@@ -283,11 +282,11 @@ int main(){
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
 					fetch.get(isb,rFile);
+					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
 					else iag.jumpPC(isb,isb.branch_address);
 				}
-				printD(isb);
-				updateISB(isb);
+				if(end)	updateISB(isb);
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
@@ -313,11 +312,11 @@ int main(){
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
 					fetch.get(isb,rFile);
+					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
 					else iag.jumpPC(isb,isb.branch_address);
 				}
-				printD(isb);
-				updateISB(isb);
+				if(end)	updateISB(isb);
 			}
 			if(isb.IR.readInt() == 0 )
 				end = true;

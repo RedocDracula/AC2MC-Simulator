@@ -466,6 +466,12 @@ class Decode{
 
         }
 
+				if(ibs.hazard_type == 1 || ibs.hazard_type == 2){
+					// locC value save karni hai ie register number
+					regFile.writeInt(locC, ibs.returnAddD);
+
+				}
+
         /*
         //Concatenated opcode func3 and func7 and checked for ALU_OP
         string relStr;
