@@ -1,8 +1,11 @@
 addi x3,x0,3
 addi x4,x0,4
-sw x4,0(x2)
-addi x4,x0,9
+jal x1,LABEL
+addi x7,x0,7
+beq x0,x0,quit
+LABEL:
 addi x5,x0,5
 addi x6,x0,6
-lw x4,0(x2)
-add x11,x0,x4
+jalr x0,0(x1)
+quit:
+addi x8,x0,8

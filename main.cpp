@@ -46,7 +46,7 @@ int main(){
 
 	int insType;
 	
-	string inputFileName = "input.txt";
+	string inputFileName = "input1.txt";
 	string outputFileName = "machineCode.txt";
 	string basicCodeFileName = "basicCode.txt";
 
@@ -217,6 +217,7 @@ int main(){
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
 					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -230,7 +231,7 @@ int main(){
 					updateISB(isb);
 			}
 			else if(i==3) {
-				if(!isb.stall)alu.compute(isb);
+				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					isb.wblocW = isb.wblocM;
@@ -242,6 +243,7 @@ int main(){
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
 					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -268,6 +270,7 @@ int main(){
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
 					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -295,6 +298,7 @@ int main(){
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
 					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -414,8 +418,8 @@ void updateISB(InterStateBuffers &isb){
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-			cout<<"NEXT PC : "<<isb.nextPC<<endl;
+//			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+//			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
 }
