@@ -72,6 +72,8 @@ class Fetch {
             }
             imm2[31] = IR[31];
 			branch_address = bitsetRead(imm2) + buf.PC;  
+			branch_address_def = buf.PC + 1; 
+			cout<<" $$$$$$$$$$$$ branchADDRESS"<<branch_address<<endl;
 			
 		} else if (hazardType == 2) {
 			// jalr Instruction
@@ -81,7 +83,10 @@ class Fetch {
             for(int i=0; i<5; i++){
                 rs1[i] = IR[15+i];
             }
-						branch_address = bitsetRead(imm) + reg.readInt(bitsetRead(rs1));        
+						cout<<"$$$$$$$$$$$$$ rs1 : "<<rs1<<"   value : "<<reg.readInt(bitsetRead(rs1))<<endl;
+						branch_address = bitsetRead(imm) + reg.readInt(bitsetRead(rs1));    
+						branch_address_def = buf.PC + 1;   
+						cout<<" $$$$$$$$$$$$ branchADDRESS"<<branch_address<<endl;  
 		} else { 
 			// Branch Instructions
             imm1[10] = IR[7];

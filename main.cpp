@@ -213,6 +213,8 @@ int main(){
 					isb.wblocE = -1;		 
 					isb.insTypeW = isb.insTypeM;
 					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
 					isb.isjalrW = isb.isjalrM;
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
@@ -239,6 +241,8 @@ int main(){
 					isb.wblocE = -1;		 
 					isb.insTypeW = isb.insTypeM;
 					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
 					isb.isjalrW = isb.isjalrM;
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
@@ -266,6 +270,8 @@ int main(){
 					isb.wblocE = -1;		 
 					isb.insTypeW = isb.insTypeM;
 					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
 					isb.isjalrW = isb.isjalrM;
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
@@ -294,6 +300,8 @@ int main(){
 					isb.wblocE = -1;		 
 					isb.insTypeW = isb.insTypeM;
 					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
 					isb.isjalrW = isb.isjalrM;
 					isb.isjalrM = isb.isjalrE;
 					isb.isMemW = isb.isMemM;
@@ -375,6 +383,7 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 				}
 		}
 		else if(isb.isjalrM == true || isb.insTypeM == 5){
+			cout<<" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
 			muxy.MUX_Y_SELECT = 3;
 		}
 		else
@@ -401,6 +410,10 @@ void updateISB(InterStateBuffers &isb){
 	isb.wblocM = isb.wblocE;
 	isb.wblocE = isb.wblocD;
 	
+	isb.returnAddW = isb.returnAddM;
+	isb.returnAddM = isb.returnAddE;
+	isb.returnAddE = isb.returnAddD;
+	isb.returnAddD = isb.return_address;
 
 	isb.insTypeW = isb.insTypeM;
 	isb.insTypeM = isb.insTypeE;
@@ -418,10 +431,11 @@ void updateISB(InterStateBuffers &isb){
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-//			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-//			cout<<"NEXT PC : "<<isb.nextPC<<endl;
+			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
+			cout<<"::::::::::::::::::::::::::::::::::::::::::::::::"<<endl;
 }
 
 void updateAfterDecoder(InterStateBuffers &isb){

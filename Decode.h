@@ -68,7 +68,17 @@ class Decode{
 		if(!ibs.enablePipe) insType = ibs.insType;
 		else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
-
+				if(insType == 0){
+					opcode = 51;
+					func3 = 0;
+					func7 = 0;
+					rs1 = 0;
+					rs2 = 0;
+					rd = 0;
+					ibs.ALU_OP = "add";
+					hasFunc3 = true;
+					hasFunc7 = true;
+				}
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
             for(int i=0;i<7;i++){
@@ -146,7 +156,6 @@ class Decode{
             ibs.write_back_location = -1;
         }
         if(insType == 4){
-            cout<<"S-TYPE DECODING"<<endl;
             // SType immediate (7) | rs2 (5) | rs1 (5) | func3 | immediate (5) | opcode (7) |
             // rs1 replaced by rd to symbolize reading on that register, rs2 replaced by rs1 to leave room for writing
             for(int i=0;i<7;i++){
@@ -293,7 +302,7 @@ class Decode{
                     ibs.stall = true; 
                 }
             }
-            else if(locB == ppWrite && pWrite != 0 && ibs.enablePipe == true){
+            else if(locB == ppWrite && ppWrite != 0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
                     ibs.stall = false;
                     ibs.RB.writeInt(ibs.RY.readInt());
@@ -476,6 +485,7 @@ class Decode{
         */
 
         //Updated ALU_OP
+
         for(int i=0;i<instructionName.size(); i++){
 					
             if(relevantstr[i] == relStr){
@@ -499,15 +509,13 @@ class Decode{
             }
 						
         }
-
-				
-
+	
         // Updating the previous write registers
         // if ibs.stall is activated, feed pWrite with 0 or insType == 4 ??
 
 
         ppWrite = pWrite;
-        if(insType == 4){
+        if(insType == 4 || ibs.stall == true){
             pWrite = 0;
         }
         else{

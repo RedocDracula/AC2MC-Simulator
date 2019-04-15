@@ -38,7 +38,7 @@ vector <int> extractint(string str) { // recieves a string and extracts all the 
 
 void  assembler_initiate(MemoryAccess &memobject)
 {
-    ifstream ifile("rand.txt");
+    ifstream ifile("input.txt");
     ofstream ofile("input1.txt",ios::out);
     string current;
      // matches the label to address in the memory or value it is referring to.

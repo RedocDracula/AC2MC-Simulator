@@ -57,6 +57,7 @@ class InterStateBuffers{
 		int isjalrD,isjalrE,isjalrM,isjalrW;
 		int wblocD,wblocE,wblocM,wblocW;
 		int isMemD,isMemE,isMemM,isMemW;
+		int returnAddD,returnAddE,returnAddM,returnAddW;
 
 		bool taken;
 		int mispredNumber;
@@ -108,6 +109,10 @@ class InterStateBuffers{
 			wblocE = -1;
 			wblocD = -1;
 	
+			returnAddW = -1;
+			returnAddM = -1;
+			returnAddE = -1;
+			returnAddD = -1;	
 
 			insTypeW = -1;
 			insTypeM = -1;
