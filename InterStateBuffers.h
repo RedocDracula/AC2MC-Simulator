@@ -64,6 +64,11 @@ class InterStateBuffers{
 		bool isMispred;
 		int nextPC;
 
+		int pWrite;     // holds the write register value for the previous instruction
+    	int ppWrite;    // the instruction before that
+    	string pInst;      // instruction
+    	string ppInst;     //
+
 
 
 
@@ -133,6 +138,9 @@ class InterStateBuffers{
 			mispredNumber = 0;
 			isMispred = false;
 			nextPC = 0;
+
+			pWrite = 0;
+			ppWrite = 0;
 		}
 
 		void resetAll(){

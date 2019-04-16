@@ -227,6 +227,9 @@ int main(){
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -245,6 +248,9 @@ int main(){
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -264,6 +270,9 @@ int main(){
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -284,6 +293,9 @@ int main(){
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
