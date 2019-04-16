@@ -26,7 +26,6 @@ void findLabels(string,vector<string>&,vector<int>&);
 void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
 void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 void print(int i, InterStateBuffers &, Registry_File &);
-void printD(InterStateBuffers &);
 void updateISB(InterStateBuffers &);
 void updateAfterDecoder(InterStateBuffers &);
 void updateIfStall(InterStateBuffers &);
@@ -144,7 +143,6 @@ int main(){
 			oFile2 <<lineNo<<" "<< line << endl;
 		}
 		oFile<<lineNo+1<<" 0 0"<<endl;
-//		cout<<"Machine code file generated succesfully."<<endl;
 	}
 	iFile.close();
 	oFile.close();
@@ -178,7 +176,7 @@ int main(){
 		while(1){
 			i++;
 			fetch.get(isb,rFile);
-			if(isb.IR.readInt() == 0 || i > 2000)
+			if(isb.IR.readInt() == 0 || i > 200)
 				break;
 
 		decode.decoder(isb,rFile);
@@ -202,11 +200,11 @@ int main(){
 		int i = 0,j=0,k;
 		while(1){
 			i++;
-			k=0;
+			/*k=0;
 			while(!k){
 				cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" CURRENTPC : "<<isb.PC<<endl;
 				cin>>k;
-			}
+			}*/
 			
 			isb.isMispred = false;
 			if(end)
@@ -227,7 +225,6 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -248,7 +245,6 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -270,7 +266,6 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -293,7 +288,6 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
@@ -342,12 +336,14 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -360,12 +356,14 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -379,12 +377,14 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -399,12 +399,14 @@ int main(){
 				decode.decoder(isb,rFile);
 				if(isb.stall){
 					updateIfStall(isb);
-					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
 				updateAfterDecoder(isb);
 				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
 				if(!end){
+					if(isb.hazard_type == 2){
+						iag.jumpPC(isb, isb.branch_address);
+					}
 					fetch.get(isb,rFile);
 					updateISB(isb);
 					if(!isb.hazard_type) iag.update(isb);
@@ -438,7 +440,6 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 				while(line[i]!=':' && i<line.size()) labelName.push_back(line[i++]);
 				labelNames.push_back(labelName);
 				labelLineNumber.push_back(lineNo);
-//				cout<<"Label found : "<<labelName<<" at line no. "<<lineNo<<endl;
 			}
 		}
 	}
@@ -523,8 +524,6 @@ void updateISB(InterStateBuffers &isb){
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-//			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
 
@@ -549,22 +548,4 @@ void updateIfStall(InterStateBuffers &isb){
 	isb.isjalrM = isb.isjalrE;
 	isb.isMemW = isb.isMemM;
 	isb.isMemM = isb.isMemE;
-}
-
-void printD(InterStateBuffers &isb){
-	cout<<"///////////////////////////////////////////////////////////////\n\n";
-	cout<<" wbloc : "<<isb.write_back_location<<"\t"<<"isMem : "<<isb.isMem<<endl;
-	cout<<" wblocD : "<<isb.wblocD<<"\t"<<"isMemD : "<<isb.isMemD<<endl;
-	cout<<" wblocE : "<<isb.wblocE<<"\t"<<"isMemE : "<<isb.isMemE<<endl;
-	cout<<" wblocM : "<<isb.wblocM<<"\t"<<"isMemM : "<<isb.isMemM<<endl;
-	cout<<" wblocW : "<<isb.wblocW<<"\t"<<"isMemW : "<<isb.isMemW<<endl<<endl;
-
-	cout<<" insType : "<<isb.insType<<"\t"<<"isjalr : "<<isb.isjalr<<endl;
-	cout<<" insTypeD : "<<isb.insTypeD<<"\t"<<"isjalrD : "<<isb.isjalrD<<endl;
-	cout<<" insTypeE : "<<isb.insTypeE<<"\t"<<"isjalrE : "<<isb.isjalrE<<endl;
-	cout<<" insTypeM : "<<isb.insTypeM<<"\t"<<"isjalrM : "<<isb.isjalrM<<endl;
-	cout<<" insTypeW : "<<isb.insTypeW<<"\t"<<"isjalrW : "<<isb.isjalrW<<endl;	
-
-	cout<<"///////////////////////////////////////////////////////////////\n";
-
 }

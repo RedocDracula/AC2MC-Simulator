@@ -16,7 +16,6 @@ class MUX_Y{
             return ibf.mem_register;
         }
         else if(MUX_Y_SELECT == 3){
-						cout<<" >>>>>>>> "<<ibf.returnAddM<<endl;
 						if(!ibf.enablePipe)
 	            return ibf.return_address;
 						else 

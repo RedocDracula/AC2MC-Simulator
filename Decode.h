@@ -66,17 +66,19 @@ class Decode{
 		if(!ibs.enablePipe) insType = ibs.insType;
 		else insType = ibs.insTypeD;
         bitset<32> IR(ibs.IR.readInt());
-				if(insType == 0){
-					opcode = 51;
-					func3 = 0;
-					func7 = 0;
-					rs1 = 0;
-					rs2 = 0;
-					rd = 0;
-					ibs.ALU_OP = "add";
-					hasFunc3 = true;
-					hasFunc7 = true;
-				}
+
+
+        if(insType == 0){
+            opcode = 51;
+            func3 = 0;
+            func7 = 0;
+            rs1 = 0;
+            rs2 = 0;
+            rd = 0;
+            ibs.ALU_OP = "add";
+            hasFunc3 = true;
+            hasFunc7 = true;
+        }
         if(insType == 1){
             // RType | opcode (7) | rd (5) | funct3 | rs1(5) | rs2 (5) | funct7 |
             for(int i=0;i<7;i++){
@@ -249,9 +251,7 @@ class Decode{
         if(locA == ibs.pWrite && ibs.pWrite!=0 && ibs.enablePipe == true){
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
-                cout<<"INNA IN DF"<<endl;
                 if(ibs.pInst == "lw" || ibs.pInst == "lb" || ibs.pInst == "lh"){
-                    cout<<"IMMA IN LOAD"<<endl;
                     stallA = true;
                 }
                 else{
@@ -399,12 +399,14 @@ class Decode{
                 ibs.RMD.writeInt(regFile.readInt(locC));
             }
         }
+        if(!ibs.enablePipe){
+            ibs.RM = ibs.RMD;
+        }
 
         if(ibs.hazard_type == 2){
             int ra = ibs.RA.readInt();
             int rb = ibs.RB.readInt();
             ibs.branch_address = ra + rb;
-            cout<<"BRANCH ADDRESS :     "<<ibs.branch_address<<endl;
         }
 
         //Branch prediction checking
@@ -458,7 +460,6 @@ class Decode{
                 // Implement flush logic
                 // Put ba_def in PC
                 ibs.nextPC = ibs.branch_address_def;
-								cout<<" ^^^^^^^^ mis pred\n";
             }
             else if(ibs.taken == false && state == true){
                 ibs.mispredNumber++;
@@ -466,17 +467,15 @@ class Decode{
                 // Implement flush logic
                 // Put ba in PC
                 ibs.nextPC = ibs.branch_address;
-								cout<<" ^^^^^^^^ mis pred\n";
             }
             else{
                 //Sab sahi hai bero
                 ibs.isMispred = false;
-								cout<<" ^^^^^^^^ Sab sahi hai bero\n";
             }
 
         }
 
-				if(ibs.hazard_type == 1 || ibs.hazard_type == 2){
+				if((ibs.hazard_type == 1 || ibs.hazard_type == 2) && ibs.enablePipe){
 					// locC value save karni hai ie register number
 					regFile.writeInt(locC, ibs.returnAddD);
 
@@ -508,25 +507,6 @@ class Decode{
         else{
             ibs.stall = false;
         }
-
-        /*if(!ibs.enableDF){
-            if(stallA || stallB || stallC){
-            ibs.stall = false;
-            opcode = 51;
-			func3 = 0;
-			func7 = 0;
-			rs1 = 0;
-			rs2 = 0;
-			rd = 0;
-			ibs.ALU_OP = "add";
-			hasFunc3 = true;
-			hasFunc7 = true;
-            ibs.PC = ibs.return_address-1;
-            }
-        }*/
-
-        cout<<"PREV INST    "<<ibs.pInst<<"     "<<ibs.pWrite<<endl;
-        cout<<"PREV PREV INST    "<<ibs.ppInst<<"     "<<ibs.ppWrite<<endl;
 
         for(int i=0;i<instructionName.size(); i++){
 					

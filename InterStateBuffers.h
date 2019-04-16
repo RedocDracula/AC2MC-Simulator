@@ -103,8 +103,8 @@ class InterStateBuffers{
 
 			enablePipe = true;
 			enableDF = true; 
-			printRegFile = true;
-			printISB = true;
+			printRegFile = false;
+			printISB = false;
 			printISBspecific = false;
 			stall  = false;
 			hazard_type = 0;
@@ -156,21 +156,12 @@ class InterStateBuffers{
 
 		void printAll(){
 			cout<<"********** Inter State Buffer Values ***********\n";
+			cout<<"\tIR\t:\t"<<IR.readBitset()<<endl;
 			cout<<"\tRA\t:\t"<<RA.readInt()<<endl;
 			cout<<"\tRB\t:\t"<<RB.readInt()<<endl;
-			cout<<"\tRMD\t:\t"<<RMD.readInt()<<endl;
 			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
 			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
-			cout<<"\tpc_offset\t:\t"<<pc_offset<<endl;
-			cout<<"\tisjalr\t:\t"<<isjalr<<endl;
-			cout<<"\tmem_register\t:\t"<<mem_register<<endl;
-			cout<<"\treturn_address\t:\t"<<return_address<<endl;
-			cout<<"\tbranch_address_def\t:\t"<<branch_address_def<<endl;
-			cout<<"\tbranch_address\t:\t"<<branch_address<<endl;
-			cout<<"\thazard_type\t:\t"<<hazard_type<<endl;
-			cout<<"\twrite_back_location\t:\t"<<write_back_location<<endl;
-			cout<<"\tmis prediction\t:\t"<<isMispred<<endl;
 			cout<<"*************************************************\n";
 
 		}
