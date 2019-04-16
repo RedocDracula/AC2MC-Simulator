@@ -38,7 +38,7 @@ class Register{
 
 class InterStateBuffers{
 	public:
-		Register RA, RB, RX, RY, RM, RZ;
+		Register RA, RB, RX, RY, RM, RZ, RMD;
 		int PC;
 		int mem_register, return_address;
 		Register IR;
@@ -158,6 +158,7 @@ class InterStateBuffers{
 			cout<<"********** Inter State Buffer Values ***********\n";
 			cout<<"\tRA\t:\t"<<RA.readInt()<<endl;
 			cout<<"\tRB\t:\t"<<RB.readInt()<<endl;
+			cout<<"\tRMD\t:\t"<<RMD.readInt()<<endl;
 			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
 			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;

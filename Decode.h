@@ -366,6 +366,8 @@ class Decode{
             ibs.pc_offset = 0;
         }
 
+        ibs.RM = ibs.RMD;
+
         if(insType == 4){
             if(locC == ibs.pWrite && ibs.pWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
@@ -374,7 +376,7 @@ class Decode{
                     }
                     else{
                         stallC = false;
-                        ibs.RM.writeInt(ibs.RZ.readInt());
+                        ibs.RMD.writeInt(ibs.RZ.readInt());
                     }
                 }
                 else{
@@ -385,7 +387,7 @@ class Decode{
             else if(locC == ibs.ppWrite && ibs.ppWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
                     stallC = false;
-                    ibs.RM.writeInt(ibs.RY.readInt());
+                    ibs.RMD.writeInt(ibs.RY.readInt());
                 }
                 else{
                     //ibs.stall
@@ -394,7 +396,7 @@ class Decode{
             }
             else{
                 stallC = false;
-                ibs.RM.writeInt(regFile.readInt(locC));
+                ibs.RMD.writeInt(regFile.readInt(locC));
             }
         }
 
