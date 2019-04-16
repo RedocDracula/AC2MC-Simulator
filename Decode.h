@@ -22,6 +22,10 @@ class Decode{
     int locA, locB, locC;
     bool hasFunc3 = true;
     bool hasFunc7 = true;
+    bool stallA = false;
+    bool stallB = false;
+    bool stallC = false;
+
 
 
     // initialising function
@@ -245,34 +249,36 @@ class Decode{
         if(locA == ibs.pWrite && ibs.pWrite!=0 && ibs.enablePipe == true){
             // if pipelining and data forwarding is true
             if(ibs.enableDF == true){
+                cout<<"INNA IN DF"<<endl;
                 if(ibs.pInst == "lw" || ibs.pInst == "lb" || ibs.pInst == "lh"){
-                    ibs.stall = true;
+                    cout<<"IMMA IN LOAD"<<endl;
+                    stallA = true;
                 }
                 else{
-                    ibs.stall = false;
+                    stallA = false;
                     ibs.RA.writeInt(ibs.RZ.readInt());
                 }
             }
             // if only pipelining is true
             else{
                 // ibs.stall the pipeline
-                ibs.stall = true;
+                stallA = true;
             }
         }
         else if(locA == ibs.ppWrite && ibs.ppWrite != 0 && ibs.enablePipe == true){
             if(ibs.enableDF == true){
                 // for general instruction, no load exceptions are here
-                ibs.stall = false;
+                stallA = false;
                 ibs.RA.writeInt(ibs.RY.readInt());
             }
             // if only pipelining is true
             else{
                 // ibs.stall the pipeline
-                ibs.stall = true;
+                stallA = true;
             }
         }
         else{
-            ibs.stall = false;
+            stallA = false;
             ibs.RA.writeInt(regFile.readInt(locA));
         }
 
@@ -284,30 +290,30 @@ class Decode{
             if(locB == ibs.pWrite && ibs.pWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
                     if(ibs.pInst == "lw" || ibs.pInst == "lb" || ibs.pInst == "lh"){
-                        ibs.stall = true;
+                        stallB = true;
                     }
                     else{
-                        ibs.stall = false;
+                        stallB = false;
                         ibs.RB.writeInt(ibs.RZ.readInt());
                     }
                 }
                 // if only pipelining is true
                 else{
                     // ibs.stall
-                    ibs.stall = true; 
+                    stallB = true; 
                 }
             }
             else if(locB == ibs.ppWrite && ibs.ppWrite != 0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    ibs.stall = false;
+                    stallB = false;
                     ibs.RB.writeInt(ibs.RY.readInt());
                 }
                 else{
-                    ibs.stall = true;
+                    stallB = true;
                 }
             }
             else{
-                ibs.stall = false;
+                stallB = false;
                 ibs.RB.writeInt(regFile.readInt(locB));
             }
         }
@@ -364,30 +370,30 @@ class Decode{
             if(locC == ibs.pWrite && ibs.pWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
                     if(ibs.pInst == "lw" || ibs.pInst == "lb" || ibs.pInst == "lh"){
-                        ibs.stall = true;
+                        stallC = true;
                     }
                     else{
-                        ibs.stall = false;
+                        stallC = false;
                         ibs.RM.writeInt(ibs.RZ.readInt());
                     }
                 }
                 else{
                     //ibs.stall
-                    ibs.stall = true;
+                    stallC = true;
                 }
             }
             else if(locC == ibs.ppWrite && ibs.ppWrite !=0 && ibs.enablePipe == true){
                 if(ibs.enableDF == true){
-                    ibs.stall = false;
+                    stallC = false;
                     ibs.RM.writeInt(ibs.RY.readInt());
                 }
                 else{
                     //ibs.stall
-                    ibs.stall = true;
+                    stallC = true;
                 }
             }
             else{
-                ibs.stall = false;
+                stallC = false;
                 ibs.RM.writeInt(regFile.readInt(locC));
             }
         }
@@ -493,6 +499,13 @@ class Decode{
         */
 
         //Updated ALU_OP
+
+        if(stallA || stallB || stallC){
+            ibs.stall = true;
+        }
+        else{
+            ibs.stall = false;
+        }
 
         cout<<"PREV INST    "<<ibs.pInst<<"     "<<ibs.pWrite<<endl;
         cout<<"PREV PREV INST    "<<ibs.ppInst<<"     "<<ibs.ppWrite<<endl;
