@@ -63,13 +63,13 @@ int main(){
 	
 	MemoryAccess memAccess;
 
-//	assembler_initiate(memAccess);
-
+	assembler_initiate(memAccess);
 		
 	ifstream iFile(inputFileName.c_str(), ios :: in);
 	ofstream oFile(outputFileName.c_str());
 	ofstream oFile2(basicCodeFileName.c_str());
 
+	cout<<"\n::::::::::  RISC V SIMULATOR :::::::::::::\n\n"<<endl;
 	
 	//Find All Labels in the input file
 	findLabels(inputFileName,labelNames,labelLineNumber);	
@@ -143,7 +143,7 @@ int main(){
 			oFile2 <<lineNo<<" "<< line << endl;
 		}
 		oFile<<lineNo+1<<" 0 0"<<endl;
-		cout<<"Machine code file generated succesfully."<<endl;
+//		cout<<"Machine code file generated succesfully."<<endl;
 	}
 	iFile.close();
 	oFile.close();
@@ -158,6 +158,18 @@ int main(){
 	IAG iag;
 
 	decode.initialise();
+		
+	cout<<">>> Modes <<<"<<endl;
+	cout<<"  1) Without Pipelining\n  2) With Pipelining but no data forwarding\n";
+	cout<<"  3) With Pipelining and data forwarding\n\n";
+	cout<<" Enter your choice : ";
+
+	int ch;
+	cin>>ch;
+	if(ch ==1) isb.enablePipe = false;
+	else if(ch == 2) { isb.enablePipe = true; isb.enableDF = false;}
+	else if(ch == 3) { isb.enablePipe = true; isb.enableDF = true;}
+	else{ cout<<" invalid choice !\n"; return 0;}
 
 // If pipeline is disabled
 	if(!isb.enablePipe){
@@ -183,8 +195,8 @@ int main(){
 		rFile.print();
 	}
 
-// If pipeline is enabled
-	if(isb.enablePipe){
+// If pipeline is enabled with data forwarding
+	if(isb.enablePipe && isb.enableDF){
 		bool end = false, skipExecute = false;
 		int i = 0,j=0;
 		while(1){
@@ -326,6 +338,151 @@ int main(){
 		cout<<" Final register values :\n";	
 		rFile.print();
 	}
+
+	// If pipeline is enabled without data forwarding
+	if(isb.enablePipe && !isb.enableDF){
+		bool end = false, skipExecute = false;
+		int i = 0,j=0;
+		while(1){
+			i++;
+			isb.isMispred = false;
+			if(end)
+				j++;
+			if(j >= 4|| i > 50)
+				break;
+
+			
+			if(i==1){
+				if(!end){
+					fetch.get(isb,rFile);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
+				}
+				updateISB(isb);
+			}
+			else if(i==2) {
+				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
+					continue;
+				}
+				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
+				if(!end){
+					fetch.get(isb,rFile);
+					updateISB(isb);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
+				}
+				if(end)	updateISB(isb);
+			}
+			else if(i==3) {
+				if(!isb.stall) alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
+					continue;
+				}
+				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
+				if(!end){
+					fetch.get(isb,rFile);
+					updateISB(isb);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
+				}
+				if(end)	updateISB(isb);
+			}
+			else if(i==4) {
+				memory(isb, memAccess, muxy);
+				if(!isb.stall) alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
+					continue;
+				}
+				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
+				if(!end){
+					fetch.get(isb,rFile);
+					updateISB(isb);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
+				}
+				if(end)	updateISB(isb);
+			}
+			else{
+				writeBack(isb, regUpdate, rFile);
+				memory(isb, memAccess, muxy);
+				if(!isb.stall) alu.compute(isb);
+				decode.decoder(isb,rFile);
+				if(isb.stall){
+					isb.wblocW = isb.wblocM;
+					isb.wblocM = isb.wblocE;
+					isb.wblocE = -1;		 
+					isb.insTypeW = isb.insTypeM;
+					isb.insTypeM = isb.insTypeE;
+					isb.returnAddW = isb.returnAddM;
+					isb.returnAddM = isb.returnAddE;
+					isb.isjalrW = isb.isjalrM;
+					isb.isjalrM = isb.isjalrE;
+					isb.isMemW = isb.isMemM;
+					isb.isMemM = isb.isMemE;
+					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
+					continue;
+				}
+				updateAfterDecoder(isb);
+				if(isb.isMispred) iag.jumpPC(isb,isb.nextPC);
+				if(!end){
+					fetch.get(isb,rFile);
+					updateISB(isb);
+					if(!isb.hazard_type) iag.update(isb);
+					else iag.jumpPC(isb,isb.branch_address);
+				}
+				if(end)	updateISB(isb);
+			}
+			if(isb.IR.readInt() == 0 )
+				end = true;
+			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
+		}
+		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
+		cout<<" Final register values :\n";	
+		rFile.print();
+	}
+
 	return 0;
 }
 
@@ -382,7 +539,6 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 				}
 		}
 		else if(isb.isjalrM == true || isb.insTypeM == 5){
-			cout<<" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
 			muxy.MUX_Y_SELECT = 3;
 		}
 		else
