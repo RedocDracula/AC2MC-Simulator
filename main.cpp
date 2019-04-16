@@ -202,11 +202,11 @@ int main(){
 		int i = 0,j=0,k;
 		while(1){
 			i++;
-//			k=0;
-//			while(!k){
-//				cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" CURRENTPC : "<<isb.PC<<endl;
-//				cin>>k;
-//			}
+			k=0;
+			while(!k){
+				cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" CURRENTPC : "<<isb.PC<<endl;
+				cin>>k;
+			}
 			
 			isb.isMispred = false;
 			if(end)
@@ -327,7 +327,7 @@ int main(){
 			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 50)
+			if(j >= 4|| i > 200)
 				break;
 			
 			if(i==1){
@@ -420,7 +420,6 @@ int main(){
 		cout<<" Final register values :\n";	
 		rFile.print();
 	}
-
 	return 0;
 }
 
@@ -524,10 +523,11 @@ void updateISB(InterStateBuffers &isb){
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-//			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
-			cout<<"NEXT PC : "<<isb.nextPC<<endl;
+			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+//			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
+
 			cout<<"::::::::::::::::::::::::::::::::::::::::::::::::"<<endl;
 }
 
@@ -552,7 +552,7 @@ void updateIfStall(InterStateBuffers &isb){
 }
 
 void printD(InterStateBuffers &isb){
-/*	cout<<"///////////////////////////////////////////////////////////////\n\n";
+	cout<<"///////////////////////////////////////////////////////////////\n\n";
 	cout<<" wbloc : "<<isb.write_back_location<<"\t"<<"isMem : "<<isb.isMem<<endl;
 	cout<<" wblocD : "<<isb.wblocD<<"\t"<<"isMemD : "<<isb.isMemD<<endl;
 	cout<<" wblocE : "<<isb.wblocE<<"\t"<<"isMemE : "<<isb.isMemE<<endl;
@@ -566,5 +566,5 @@ void printD(InterStateBuffers &isb){
 	cout<<" insTypeW : "<<isb.insTypeW<<"\t"<<"isjalrW : "<<isb.isjalrW<<endl;	
 
 	cout<<"///////////////////////////////////////////////////////////////\n";
-*/
+
 }

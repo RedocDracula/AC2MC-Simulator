@@ -509,6 +509,22 @@ class Decode{
             ibs.stall = false;
         }
 
+        /*if(!ibs.enableDF){
+            if(stallA || stallB || stallC){
+            ibs.stall = false;
+            opcode = 51;
+			func3 = 0;
+			func7 = 0;
+			rs1 = 0;
+			rs2 = 0;
+			rd = 0;
+			ibs.ALU_OP = "add";
+			hasFunc3 = true;
+			hasFunc7 = true;
+            ibs.PC = ibs.return_address-1;
+            }
+        }*/
+
         cout<<"PREV INST    "<<ibs.pInst<<"     "<<ibs.pWrite<<endl;
         cout<<"PREV PREV INST    "<<ibs.ppInst<<"     "<<ibs.ppWrite<<endl;
 
