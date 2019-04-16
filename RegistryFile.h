@@ -24,7 +24,7 @@ public:
 	}
 
 	int readInt( int index ) {
-		return registers[index].to_ulong();		// SHOULD BE READBITSET
+		return bitsetRead(registers[index]);
 	}
 
 	void writeBits (int index , bitset <REG_WIDTH> value) {
