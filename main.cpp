@@ -199,13 +199,19 @@ int main(){
 // If pipeline is enabled with data forwarding
 	if(isb.enablePipe && isb.enableDF){
 		bool end = false;
-		int i = 0,j=0;
+		int i = 0,j=0,k;
 		while(1){
 			i++;
+//			k=0;
+//			while(!k){
+//				cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" CURRENTPC : "<<isb.PC<<endl;
+//				cin>>k;
+//			}
+			
 			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 50)
+			if(j >= 4|| i > 100)
 				break;
 
 			
@@ -518,7 +524,7 @@ void updateISB(InterStateBuffers &isb){
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
 			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
+//			cout<<"PC Value : "<<isb.PC<<" IR : "<<isb.IR.readBitset()<<" Instype : "<<isb.insType<<endl;
 			cout<<"NEXT PC : "<<isb.nextPC<<endl;
 			if(isb.printRegFile) rFile.print();
 			if(isb.printISB) isb.printAll();
