@@ -3,11 +3,13 @@
 #include <bitset>
 #include <vector>
 #include "MemoryAccess.h"
-#define CACHESIZE 256
-
+#include "InterStateBuffers.h"
+#define NUMBER_SETS 64 
+#define SET_SIZE 2
+// Address is 16 BIT .
 using namespace std;
 
-class Entry{
+class Block{
     private:
     int tag;
     int hits;
@@ -15,7 +17,7 @@ class Entry{
     bool writeback;
     friend class Cache;
     public:
-    Entry(){
+    Block(){
         tag = 0;
         data.resize(20); // 20 words in a block
         writeback = 0;
@@ -23,20 +25,21 @@ class Entry{
     }
 };
 
-class Cache{
-    private: // 8 MB Cache 
-    vector < vector<Entry> > CacheMemory;
-    bitset <8> tag;
-    bitset <4> set;
-    bitset <20> word;
+class Cache{ // Cache has 128 Blocks, each Block has 16 words, each word is 32 bit.
+    private: 
+    vector < vector<Block> > CacheMemory;
+    bitset <6> tag;
+    bitset <6> set;
+    bitset <4> word;
     int CacheSize = 0;
+
     public:
     Cache(){
-        CacheMemory.resize(CACHESIZE);
+        CacheMemory.resize(NUMBER_SETS);
     }
 
     bool isfull(int setindex){
-       return  CacheMemory[setindex].size() == 4;
+       return  CacheMemory[setindex].size() == SET_SIZE; //2 - way set associate Cache.
     }
 
     int LeastUsed(int SetIndex){
@@ -52,52 +55,60 @@ class Cache{
         return LeastHitBlock;
     }
 
-    int ReadCache(bitset <32> address, MemoryAccess &memobject){
+    void ReadCache(bitset <16> address, MemoryAccess &memobject, InterStateBuffers & isb){ // read Word in Cache
         int k;
         bool found = 0;
-        for(int i = 0 ; i <= 19 ; i++)
+        for(int i = 0 ; i <= 3 ; i++)
             word[i] = address[i];
         k = 0;
-        for(int i = 20 ; i <= 23; i++)
+        for(int i = 4 ; i <= 9; i++)
             set[k++] = address[i] ;
         k = 0;
-        for(int i =  24 ; i <= 31 ; i++ )
+        for(int i =  10 ; i <= 15 ; i++ )
             tag[k++] = address[i];
         
         // tag , set number and word number(block offset ) has been found.
         int setindex = set.to_ulong();
 
-        if(setindex >= CACHESIZE || setindex < 0)
+        if(setindex >= NUMBER_SETS || setindex < 0)
         {
             cout<<"Setindex is going out of bound !  , SEGFAULT "<<endl;
         }
-
+        // Check for hit in Cache
         for(int i = 0; i < CacheMemory[setindex].size() ; i++){
             if(CacheMemory[setindex][i].tag == tag.to_ulong()){ // A HIT in the Cache.
                 found = true;
                 CacheMemory[setindex][i].hits++;
                 int wordindex = word.to_ulong();
-                return CacheMemory[setindex][i].data[wordindex];
+                isb.mem_register = CacheMemory[setindex][i].data[wordindex];
+                return;
             }
         }
 
         if(!found){ // MISS in the cache
             if(isfull(setindex)){
-                int ToRemove = LeastUsed(setindex);
+                int ToRemove = LeastUsed(setindex); // implement LRU here
                 if(CacheMemory[setindex][ToRemove].writeback == 1){ // if we need to Write Back to Memory. (sorta like Lazy Update)
                     memobject.writeBlock(CacheMemory[setindex][ToRemove]);
                 }
 
                 CacheMemory[setindex].erase(CacheMemory[setindex].begin(), CacheMemory[setindex].begin() + ToRemove); // remove the least used block in the set
             }
-            int Value = memobject.readMem(address.to_ulong()); // read from memory and write to Cache
-            Entry entry;
-            entry.data[word.to_ulong()] = Value;
-            entry.tag = tag.to_ulong();
-            CacheMemory[setindex].push_back(entry); // write to cache.
-            return Value;
+            int Value = memobject.readByte(address.to_ulong()); // read from memory and write to Cache
+            // Block entry;
+            // entry.data[word.to_ulong()] = Value;
+            // entry.tag = tag.to_ulong();
+            // CacheMemory[setindex].push_back(entry); // write to cache.
+            Block Read = memobject.readBlock(address.to_ulong());
+            CacheMemory[setindex].push_back(Read);
+            isb.mem_register =  Value;
+            return;
         }
-
-        
     }
+
+    void WriteCache(){
+
+    }
+
+
 };

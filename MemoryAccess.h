@@ -63,7 +63,7 @@ public:
 		
 	}
 
-		void writeWord(int address, int data ) { // WRITES RM value to RZ index
+		void writeWord(int address, int data ) { // Writes Data at Index, Basically Memory[index] = data( in bytes)
 		
 		bitset <8> byte1,byte2,byte3,byte4;
 		bitset <32> source = data;
@@ -92,6 +92,36 @@ public:
 		unite (output, byte1, byte2, byte3, byte4);
 
 		isb.mem_register = bitsetRead(output);
+	}
+
+	int readWord(int address){
+		bitset <BYTE> byte1, byte2, byte3, byte4; 	
+		bitset <WORD> output;
+		int index = address;
+
+		byte1 = MEM [index + 0];
+		byte2 = MEM [index + 1];
+		byte3 = MEM [index + 2];
+		byte4 = MEM [index + 3];
+
+		unite (output, byte1, byte2, byte3, byte4);
+
+		return output.to_ulong();
+
+	}
+
+	int readByte(int address){
+		bitset <WORD> output;
+		bitset <BYTE> byte; 
+		
+		int index = address;
+		byte = MEM[index];
+
+		for (int i = 0;i<8;i++) {
+			output[i] = byte[i];
+		}
+
+		return output.to_ulong();
 	}
 
 	void writeByte ( InterStateBuffers & isb ) { // WRITES RM value to RZ index
