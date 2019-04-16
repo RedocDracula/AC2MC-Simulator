@@ -29,6 +29,7 @@ void print(int i, InterStateBuffers &, Registry_File &);
 void printD(InterStateBuffers &);
 void updateISB(InterStateBuffers &);
 void updateAfterDecoder(InterStateBuffers &);
+void updateIfStall(InterStateBuffers &);
 
 int main(){
 
@@ -197,7 +198,7 @@ int main(){
 
 // If pipeline is enabled with data forwarding
 	if(isb.enablePipe && isb.enableDF){
-		bool end = false, skipExecute = false;
+		bool end = false;
 		int i = 0,j=0;
 		while(1){
 			i++;
@@ -219,17 +220,7 @@ int main(){
 			else if(i==2) {
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -247,17 +238,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -276,17 +257,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -306,17 +277,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -350,7 +311,6 @@ int main(){
 				j++;
 			if(j >= 4|| i > 50)
 				break;
-
 			
 			if(i==1){
 				if(!end){
@@ -363,17 +323,7 @@ int main(){
 			else if(i==2) {
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -391,17 +341,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -420,17 +360,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -450,17 +380,7 @@ int main(){
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
-					isb.wblocW = isb.wblocM;
-					isb.wblocM = isb.wblocE;
-					isb.wblocE = -1;		 
-					isb.insTypeW = isb.insTypeM;
-					isb.insTypeM = isb.insTypeE;
-					isb.returnAddW = isb.returnAddM;
-					isb.returnAddM = isb.returnAddE;
-					isb.isjalrW = isb.isjalrM;
-					isb.isjalrM = isb.isjalrE;
-					isb.isMemW = isb.isMemM;
-					isb.isMemM = isb.isMemE;
+					updateIfStall(isb);
 					cout<<" !!!!!!!! STALLING !!!!!!!!!!! "<<endl;
 					continue;
 				}
@@ -597,6 +517,20 @@ void updateAfterDecoder(InterStateBuffers &isb){
 	isb.wblocD = isb.write_back_location;
 	isb.isjalrD = isb.isjalr;
 	isb.isMemD = isb.isMem;
+}
+
+void updateIfStall(InterStateBuffers &isb){
+	isb.wblocW = isb.wblocM;
+	isb.wblocM = isb.wblocE;
+	isb.wblocE = -1;		 
+	isb.insTypeW = isb.insTypeM;
+	isb.insTypeM = isb.insTypeE;
+	isb.returnAddW = isb.returnAddM;
+	isb.returnAddM = isb.returnAddE;
+	isb.isjalrW = isb.isjalrM;
+	isb.isjalrM = isb.isjalrE;
+	isb.isMemW = isb.isMemM;
+	isb.isMemM = isb.isMemE;
 }
 
 void printD(InterStateBuffers &isb){
