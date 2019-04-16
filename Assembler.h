@@ -51,8 +51,12 @@ void  assembler_initiate(MemoryAccess &memobject)
 
     while(getline(ifile,current))
     {
+        
         if(current == ".data"){
             start = 1;
+            continue;
+        }
+        else if(current.size() == 0){
             continue;
         }
         else if(current == ".text"){
@@ -107,7 +111,7 @@ void  assembler_initiate(MemoryAccess &memobject)
                 i++;
             }
             while(!isalnum(current[i])) i++;
-            while(i < current.size() ){
+            while(isalnum(current[i])){
                 label.push_back(current[i]);
                 i++;
             }
@@ -119,11 +123,29 @@ void  assembler_initiate(MemoryAccess &memobject)
             }
            
             else
-            ofile<<current<<endl;
+            {
+                bool commline = 0;
+                for(int i = 0; i < current.size()  ; i++)
+                {
+                    if(current[i] == '#'){
+                        if(i == 0 )
+                            commline = 1;
+                        break;
+                    }
+                    ofile<<current[i];
+                    
+                }
+                if(!commline)
+                ofile<<endl;
+            }
         }
 
         if(!start && !starttext){
-            ofile<<current<<endl;
+                for(int i = 0; i < current.size() && current[i] != '#' ; i++)
+                {
+                    ofile<<current[i];
+                }
+                ofile<<endl;
         }
        
     }
