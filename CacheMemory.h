@@ -115,13 +115,13 @@ class Cache{
         if(tag != tagfound || validdata == 0 ){
             
             if(validdata == 1){
-                isb.conflict_misses_data++;
+                isb.conflict_misses++;
             }
             if(validdata == 0){
-                isb.cold_misses_data++;
+                isb.cold_misses++;
             }
             if(capacity == numblocks){
-                isb.capacity_misses_data++;
+                isb.capacity_misses++;
             }
 
             for(int i = 0 ; i < BlockSize ; i++){

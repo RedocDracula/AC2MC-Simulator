@@ -1,7 +1,7 @@
 README
 
 CS-204 project, RISC-V SIMULATOR, GROUP 13:-
-Languages:- C++, 
+Languages:- C++, Electron JavaScript 
 
 TEAM MEMBERS:- 
             Harshit Malik    :- 2017csb1078
@@ -49,3 +49,13 @@ Features:-
     Give out number of mispredictions, number of stalls etc.
 
     Print register values and inter state buffers after every cycle.
+
+Instructions not supported:-
+    - auipc, lui and pseudo instructions not handled.
+    - Assumption, code would be free of the syntax errors.
+
+Direct Mapping was implemented for the data and instruction caches.
+
+GUI :- Electron framework
+            - Node JS backend
+            - HTML CSS frontend
