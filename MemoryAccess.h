@@ -28,7 +28,7 @@ private:
 	}
 
 	void unite (bitset <32> & output , bitset <8> byte1 , bitset<8>  byte2 , bitset <8>  byte3 , bitset <8> byte4) {
-		int k,l,m,n;
+		int k=0,l=0,m=0,n=0;
 		for (int i =0;i< 32 ; i++) {
 			if (i<8) {
 				output[i] = byte1[k];k++;
@@ -51,7 +51,7 @@ public:
 		bitset <32> source = isb.RM.readBitset();
 		int index = isb.RZ.readInt();  
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
-		
+
 		// Write to its position
 		MEM [index + 0] = byte4;
 		MEM [index + 1] = byte3;
@@ -84,10 +84,10 @@ public:
 		bitset <WORD> output;
 		int index = isb.RZ.readInt();
 
-		byte1 = MEM [index + 0];
-		byte2 = MEM [index + 1];
-		byte3 = MEM [index + 2];
-		byte4 = MEM [index + 3];
+		byte4 = MEM [index + 0];
+		byte3 = MEM [index + 1];
+		byte2 = MEM [index + 2];
+		byte1 = MEM [index + 3];
 
 		unite (output, byte1, byte2, byte3, byte4);
 
@@ -99,10 +99,10 @@ public:
 		bitset <WORD> output;
 		int index = address;
 
-		byte1 = MEM [index + 0];
-		byte2 = MEM [index + 1];
-		byte3 = MEM [index + 2];
-		byte4 = MEM [index + 3];
+		byte4 = MEM [index + 0];
+		byte3 = MEM [index + 1];
+		byte2 = MEM [index + 2];
+		byte1 = MEM [index + 3];
 
 		unite (output, byte1, byte2, byte3, byte4);
 
@@ -130,6 +130,20 @@ public:
 		
 		source = isb.RZ.readBitset();
 		int index = isb.RZ.readInt();
+
+		for (int i = 0; i<8; i++) {
+			byte[i] = source[i];
+		}
+
+		MEM[index] = byte;
+	}
+
+	void writeByte ( int address , int data ) { // WRITES RM value to RZ index
+		bitset <BYTE> byte;
+		bitset <WORD> source;
+		
+		source = data;
+		int index = address;
 
 		for (int i = 0; i<8; i++) {
 			byte[i] = source[i];

@@ -67,9 +67,20 @@ void  assembler_initiate(MemoryAccess &memobject)
         else if(start == 1){ //.data portion has started 
             stringstream ss(current);
             vector <int> data;
+            bool Word = 0, byte = 0;
             string token;
+            string directive;
             ss >> token;
+            ss >> directive;
+            cout<<" DIRCTIVE!!!!!!!!!!!!! "<<directive<<endl;
+            if(directive == ".word"){
+                Word = true;
+            }
+            else if(directive == ".byte"){
+                byte = true;
+            }
 
+            
                 if(token[token.size()-1] == ':'){
                     labeldef = 1;
                     token.pop_back();
@@ -86,10 +97,17 @@ void  assembler_initiate(MemoryAccess &memobject)
                 else{
                     labelLookup.insert(make_pair(token,data[0]));
                 }
-                
-                for(int i=0; i < data.size(); i++){
-                    memobject.writeWord(address,data[i]); //Word $$$$$
-                    address += 4;
+                if(Word == true){
+                    for(int i=0; i < data.size(); i++){
+                        memobject.writeWord(address,data[i]); //Word $$$$$
+                        address += 4;
+                    }
+                }
+                else if(byte == true){
+                    for(int i=0; i < data.size(); i++){
+                        memobject.writeByte(address,data[i]); //Word $$$$$
+                        address += 1;
+                    }
                 }
             }
             
@@ -111,13 +129,18 @@ void  assembler_initiate(MemoryAccess &memobject)
                 i++;
             }
             while(!isalnum(current[i])) i++;
-            while(isalnum(current[i])){
+            while( i < current.size() && current[i] != '#'){
+                if(current[i] == ' ' || current[i] == '\t'){
+                    i++;
+                    continue;
+                }
                 label.push_back(current[i]);
                 i++;
             }
             
+            
 
-            if( (insname == "la" || insname == "lw" || insname == "lb") && label[1] != '(' ){
+            if( (insname == "la" || insname == "lw" || insname == "lb") && label[label.size()-1] != ')' ){
                 ofile<<"addi "<<regname<<",x0,"<<labelLookup[label]<<endl;
                 continue;
             }
