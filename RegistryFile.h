@@ -38,10 +38,10 @@ public:
 	void print () {
 		cout << "====== Registry File ======"  <<endl;
 		for (int i = 0;i<8;i++) {
-			cout <<"Reg "<<i << " - " << registers[i].to_ulong() << "\t";
-			cout <<"Reg "<<i+8 << " - " << registers[i+8].to_ulong() << "\t";
-			cout <<"Reg "<<i+16 << " - " << registers[i+16].to_ulong() << "\t";
-			cout <<"Reg "<<i+24 << " - " << registers[i+24].to_ulong() << endl; 
+			cout <<"Reg "<<i << " - " << bitsetRead(registers[i]) << "\t";
+			cout <<"Reg "<<i+8 << " - " << bitsetRead(registers[i+8]) << "\t";
+			cout <<"Reg "<<i+16 << " - " << bitsetRead(registers[i+16]) << "\t";
+			cout <<"Reg "<<i+24 << " - " << bitsetRead(registers[i+24]) << endl; 
 		}
 		cout<< "============================"<<endl;
 	}
