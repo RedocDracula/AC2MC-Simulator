@@ -15,19 +15,16 @@ private:
 	map <int , bitset <BYTE> > MEM; 
 	
 	void divide (bitset <32> source , bitset <8> & byte1 , bitset<8> & byte2 , bitset <8> & byte3 , bitset <8> & byte4) {
-		int k,l,m,n=0;
-		for (int i = 0;i<32;i++) {
-			if (i<8) {
-				byte1[k] = source[i];k++;
-			} else if (i<16) {
-				byte2[l] = source[i];l++;
-			} else if (i<24) {
-				byte3[m] = source[i];m++;
-			} else {
-				byte4[n] = source[i];n++;
-			}
-		}
-	
+		int k=0,l=0,m=0,n=0;
+		for(int i = 0 ; i <= 7 ; i++)
+			byte1[k++] = source[i];
+		for(int i = 8 ; i <= 15 ; i++)
+			byte2[l++] = source[i];
+		for(int i = 16 ; i <= 23 ; i++)
+			byte3[m++] = source[i];
+		for(int i = 24 ; i <= 31 ; i++)
+			byte4[n++] = source[i];
+
 	}
 
 	void unite (bitset <32> & output , bitset <8> byte1 , bitset<8>  byte2 , bitset <8>  byte3 , bitset <8> byte4) {
@@ -56,10 +53,10 @@ public:
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
 		
 		// Write to its position
-		MEM [index + 0] = byte1;
-		MEM [index + 1] = byte2;
-		MEM [index + 2] = byte3;
-		MEM [index + 3] = byte4;
+		MEM [index + 0] = byte4;
+		MEM [index + 1] = byte3;
+		MEM [index + 2] = byte2;
+		MEM [index + 3] = byte1;
 		
 	}
 
@@ -67,15 +64,18 @@ public:
 		
 		bitset <8> byte1,byte2,byte3,byte4;
 		bitset <32> source = data;
+
+		
 		int index = address;  
+		
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
-		
 		// Write to its position
-		MEM [index + 0] = byte1;
-		MEM [index + 1] = byte2;
-		MEM [index + 2] = byte3;
-		MEM [index + 3] = byte4;
-		
+		MEM [index + 0] = byte4;
+		MEM [index + 1] = byte3;
+		MEM [index + 2] = byte2;
+		MEM [index + 3] = byte1;
+
+
 	}
 
 
