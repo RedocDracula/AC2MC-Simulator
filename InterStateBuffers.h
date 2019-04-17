@@ -48,6 +48,7 @@ class InterStateBuffers{
 		bool isjalr, isMem;
 		// For stalling
 		bool stall;
+		int numStall;
 
 		int hazard_type; /* 0 No Branch , 1 Jal ,  2 Jalr ,3 branch */
 		int branch_address_def;
@@ -141,6 +142,7 @@ class InterStateBuffers{
 
 			pWrite = 0;
 			ppWrite = 0;
+			numStall = 0;
 		}
 
 		void resetAll(){

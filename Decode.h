@@ -503,6 +503,7 @@ class Decode{
 
         if(stallA || stallB || stallC){
             ibs.stall = true;
+            ibs.numStall++;
         }
         else{
             ibs.stall = false;
