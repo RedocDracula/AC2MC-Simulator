@@ -150,6 +150,19 @@ int main(){
 	oFile.close();
 	oFile2.close();
 
+	char cacheChoice;
+	cout<<"Enable cache ? (y/n) : ";
+	cin>>cacheChoice;
+	int cs=512,bs=4;
+	if(cacheChoice=='y'||cacheChoice=='Y'){
+		isb.enableCache = true;
+		cout<<" Enter cache size in Bytes (recommended size - 512 B) : ";
+		cin>>cs;
+		cout<<" Enter cache block size in Bytes (recommended size - 4 B) : ";
+		cin>>bs;
+	}
+	else isb.enableCache = true;
+
 	Registry_File rFile;
 	Fetch fetch;
 	MUX_Y muxy;
@@ -157,7 +170,7 @@ int main(){
 	RegUpdate regUpdate;
 	ALU alu;
 	IAG iag;
-	Cache cache(512,4,1,1);
+	Cache cache(cs,bs,1,1);
 
 	decode.initialise();
 		
