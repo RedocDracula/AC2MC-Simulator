@@ -1,6 +1,6 @@
 #include<iostream>
 #include<fstream>
-#include <sstream>
+#include<sstream>
 #include<string.h>
 #include<bitset>
 #include"RType.h"
@@ -29,6 +29,7 @@ void print(int i, InterStateBuffers &, Registry_File &);
 void updateISB(InterStateBuffers &);
 void updateAfterDecoder(InterStateBuffers &);
 void updateIfStall(InterStateBuffers &);
+void printSummary(InterStateBuffers &);
 
 int main(){
 
@@ -164,54 +165,95 @@ int main(){
 	cout<<" Enter your choice : ";
 
 	int ch;
+	bool runStepByStep = false;
 	cin>>ch;
-	if(ch ==1) isb.enablePipe = false;
-	else if(ch == 2) { isb.enablePipe = true; isb.enableDF = false;}
-	else if(ch == 3) { isb.enablePipe = true; isb.enableDF = true;}
+	if(ch ==1){
+		isb.enablePipe = false;
+		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		char c;
+		cin>>c;
+		if(c=='y'||c=='Y') isb.printRegFile = true;
+		else isb.printRegFile = false;
+		isb.printISB = false;
+		cout<<" Run step by step ? (y/n)"<<endl;
+		cin>>c;
+		if(c=='y'||c=='Y') runStepByStep = true;
+		else runStepByStep = false;		
+	}
+	else if(ch == 2){
+		isb.enablePipe = true;
+		isb.enableDF = false;
+		char c;
+		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cin>>c;
+		if(c=='y'||c=='Y') isb.printRegFile = true;
+		else isb.printRegFile = false;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cin>>c;
+		if(c=='y'||c=='Y') isb.printISB = true;
+		else isb.printISB = false;
+	}
+	else if(ch == 3) {
+		isb.enablePipe = true;
+		isb.enableDF = true;
+		char c;
+		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cin>>c;
+		if(c=='y'||c=='Y') isb.printRegFile = true;
+		else isb.printRegFile = false;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cin>>c;
+		if(c=='y'||c=='Y') isb.printISB = true;
+		else isb.printISB = false;
+	}
 	else{ cout<<" invalid choice !\n"; return 0;}
 
 // If pipeline is disabled
 	if(!isb.enablePipe){
 		int i = 0;
+		char k;
 		while(1){
 			i++;
+			if(runStepByStep){
+				k = 'n';
+				while(k != 'r' && k != 'R'){
+					cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" ( enter 'r' to run & 'e' to terminate) "<<endl;
+					cin>>k;
+				}
+			}
 			fetch.get(isb,rFile);
-			if(isb.IR.readInt() == 0 || i > 200)
+			if(isb.IR.readInt() == 0 || k == 'e' || k == 'E')
 				break;
 
-		decode.decoder(isb,rFile);
-		alu.compute(isb);
-		memory(isb, memAccess, muxy);
-		writeBack(isb, regUpdate, rFile);
-		iag.step(isb,alu);
-		isb.resetAll();
+			decode.decoder(isb,rFile);
+			alu.compute(isb);
+			memory(isb, memAccess, muxy);
+			writeBack(isb, regUpdate, rFile);
+			iag.step(isb,alu);
+			isb.resetAll();
 
-		if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
+			if(isb.printRegFile) print(i,isb,rFile);
 		}
-	
+		isb.totalCycles = i-1;
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
 		cout<<" Final register values :\n";	
 		rFile.print();
+		cout<<" Summary :\n";
+		printSummary(isb);
 	}
 
 // If pipeline is enabled with data forwarding
 	if(isb.enablePipe && isb.enableDF){
 		bool end = false;
-		int i = 0,j=0,k;
+		int i = 0,j=0;
 		while(1){
 			i++;
-			/*k=0;
-			while(!k){
-				cout<<"\n RUN CYCLE NUMBER : "<<i<<" ? "<<" CURRENTPC : "<<isb.PC<<endl;
-				cin>>k;
-			}*/
 			
 			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 100)
+			if(j >= 4)
 				break;
-
 			
 			if(i==1){
 				if(!end){
@@ -307,9 +349,12 @@ int main(){
 				end = true;
 			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
+		isb.totalCycles = i-1;
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
 		cout<<" Final register values :\n";	
 		rFile.print();
+		cout<<" Summary :\n";
+		printSummary(isb);
 	}
 
 	// If pipeline is enabled without data forwarding
@@ -418,9 +463,12 @@ int main(){
 				end = true;
 			if(isb.printRegFile || isb.printISB) print(i,isb,rFile);
 		}
+		isb.totalCycles = i-1;
 		cout<<"\n\n---------------- Code executed succesfully ----------------\n\n"<<endl;
 		cout<<" Final register values :\n";	
 		rFile.print();
+		cout<<" Summary :\n";
+		printSummary(isb);
 	}
 	return 0;
 }
@@ -523,11 +571,16 @@ void updateISB(InterStateBuffers &isb){
 }
 
 void print(int i, InterStateBuffers &isb, Registry_File &rFile){
-			cout<<"===== < Cycle "<<i<<" > ====="<<endl;
-			if(isb.printRegFile) rFile.print();
-			if(isb.printISB) isb.printAll();
+	cout<<"===== < Cycle "<<i<<" > ====="<<endl;
+	if(isb.printRegFile) rFile.print();
+	if(isb.printISB) isb.printAll();
+	cout<<endl;
+}
 
-			cout<<"::::::::::::::::::::::::::::::::::::::::::::::::"<<endl;
+void printSummary(InterStateBuffers &isb){
+	cout<<" Total Cycles \t\t:\t"<<isb.totalCycles<<endl;
+	cout<<" Total Stalls \t\t:\t"<<isb.numStall<<endl;
+	cout<<" Total Misprediction \t:\t"<<isb.mispredNumber<<endl;
 }
 
 void updateAfterDecoder(InterStateBuffers &isb){
