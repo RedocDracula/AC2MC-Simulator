@@ -73,9 +73,12 @@ class InterStateBuffers{
     string pInst;      // instruction
     string ppInst;     //
 
-
-
-
+		int coldmiss;
+		int hitcount;
+		int accesscount;
+		int conflict_misses_data;
+		int cold_misses_data;
+		int capacity_misses_data;
 
 		//Write back location:- stores register number for writeback, 
 		//-1 for SB type where no write back occurs.
@@ -149,6 +152,13 @@ class InterStateBuffers{
 			ppWrite = 0;
 			numStall = 0;
 			totalCycles = 0;
+			
+			coldmiss = 0;
+			hitcount = 0;
+			accesscount = 0;
+			cold_misses_data = 0;
+			capacity_misses_data =  0;
+			conflict_misses_data = 0;
 		}
 
 		void resetAll(){

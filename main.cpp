@@ -598,6 +598,14 @@ void printSummary(InterStateBuffers &isb){
 	cout<<" Total Cycles \t\t:\t"<<isb.totalCycles<<endl;
 	cout<<" Total Stalls \t\t:\t"<<isb.numStall<<endl;
 	cout<<" Total Misprediction \t:\t"<<isb.mispredNumber<<endl;
+	cout<<" Total Instruction Cache access count \t:\t"<<isb.accesscount<<endl;
+	cout<<" Total Instruction Cache hit count \t:\t"<<isb.hitcount<<endl;
+	cout<<" Total Instruction Cache cold miss \t:\t"<<isb.coldmiss<<endl;
+	cout<<" Total Data Cache access count \t:\t"<<isb.accesscount<<endl;
+	cout<<" Total Data Cache hit count \t:\t"<<isb.hitcount<<endl;
+	cout<<" Total Data Cache cold miss \t:\t"<<isb.cold_misses_data<<endl;
+	cout<<" Total Data Cache conflict miss \t:\t"<<isb.conflict_misses_data<<endl;
+	cout<<" Total Data Cache capacity miss \t:\t"<<isb.capacity_misses_data<<endl;
 }
 
 void updateAfterDecoder(InterStateBuffers &isb){
