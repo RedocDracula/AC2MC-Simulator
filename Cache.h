@@ -95,12 +95,10 @@ class Cache{ // Cache has 128 Blocks, each Block has 16 words, each word is 32 b
                 CacheMemory[setindex].erase(CacheMemory[setindex].begin(), CacheMemory[setindex].begin() + ToRemove); // remove the least used block in the set
             }
             int Value = memobject.readByte(address.to_ulong()); // read from memory and write to Cache
-            // Block entry;
-            // entry.data[word.to_ulong()] = Value;
-            // entry.tag = tag.to_ulong();
-            // CacheMemory[setindex].push_back(entry); // write to cache.
+            
             Block Read = memobject.readBlock(address.to_ulong());
             CacheMemory[setindex].push_back(Read);
+            
             isb.mem_register =  Value;
             return;
         }
