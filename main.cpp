@@ -19,11 +19,12 @@
 #include"MemoryAccess.h"
 #include"InterStateBuffers.h"
 #include"Assembler.h"
+#include"CacheMemory.h"
 
 using namespace std;
 
 void findLabels(string,vector<string>&,vector<int>&);
-void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
+void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &,Cache &);
 void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 void print(int i, InterStateBuffers &, Registry_File &);
 void updateISB(InterStateBuffers &);
@@ -156,6 +157,7 @@ int main(){
 	RegUpdate regUpdate;
 	ALU alu;
 	IAG iag;
+	Cache cache(512,4,1,1);
 
 	decode.initialise();
 		
@@ -227,7 +229,7 @@ int main(){
 
 			decode.decoder(isb,rFile);
 			alu.compute(isb);
-			memory(isb, memAccess, muxy);
+			memory(isb, memAccess, muxy,cache);
 			writeBack(isb, regUpdate, rFile);
 			iag.step(isb,alu);
 			isb.resetAll();
@@ -303,7 +305,7 @@ int main(){
 				if(end)	updateISB(isb);
 			}
 			else if(i==4) {
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy,cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -325,7 +327,7 @@ int main(){
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy,cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -417,7 +419,7 @@ int main(){
 				if(end)	updateISB(isb);
 			}
 			else if(i==4) {
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy, cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -439,7 +441,7 @@ int main(){
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy, cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -494,15 +496,17 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 	iFile.close();
 }
 
-void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
+void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy,Cache &cache){
 	if(!isb.enablePipe){
 			if(isb.isMem == true){
 				if(isb.insType == 4){
-					memAccess.writeWord(isb);
+					if(isb.enableCache) cache.WriteCache(memAccess,isb,1);
+					else memAccess.writeWord(isb);
 					muxy.MUX_Y_SELECT = 1;
 				}
 				else {
-					memAccess.readWord(isb);
+					if(isb.enableCache) cache.ReadCache(memAccess,isb,1);
+					else memAccess.readWord(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 				}
 		}

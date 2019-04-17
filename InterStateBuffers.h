@@ -46,6 +46,8 @@ class InterStateBuffers{
 		int insType;
 		string ALU_OP;
 		bool isjalr, isMem;
+
+		bool enableCache;
 		// For stalling
 		bool stall;
 		int numStall;
@@ -140,6 +142,8 @@ class InterStateBuffers{
 			mispredNumber = 0;
 			isMispred = false;
 			nextPC = 0;
+
+			enableCache = true;
 
 			pWrite = 0;
 			ppWrite = 0;

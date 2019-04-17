@@ -5,7 +5,7 @@ var1: .word 12 10 13 7 4 22 19 11 23 8
 la x3, var1
 addi x4, x0,9
 jal x1,B_Sort
-addi x5,x0,2
+addi x5,x0,11
 addi x6,x0,0
 addi x7,x4,0
 jal x1,B_Search

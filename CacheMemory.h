@@ -71,7 +71,6 @@ class Cache{
 
     void ReadCache(MemoryAccess &memobject, InterStateBuffers &isb,int choice){ // choice 1 for word, choice 2 for byte
          bitset <12> address = isb.RZ.readInt();
-
          int blockoffset = address.to_ulong() % BlockSize;
          int blocknumber = address.to_ullong() / BlockSize;
          int tag = blocknumber / numblocks;
@@ -80,11 +79,14 @@ class Cache{
          int validdata = CacheMem[blocknumber][0]; // validity
          int tagfound = CacheMem[blocknumber][1]; // tag 
 
+         
+
          if(validdata == 0){
             coldmisses += 1;
          }
 
         if(tagfound == tag && validdata == 1){
+          
             int index = 3+blockoffset;
             CacheMem[blocknumber][2]++; // update hits
 
@@ -108,9 +110,37 @@ class Cache{
 
         }
 
-        if(tag != tagfound){
+        if(tag != tagfound || validdata == 0 ){
             datamiss++;
+
+           
+
+            for(int i = 0 ; i < BlockSize ; i++){
+                
+                bitset <8> data = memobject.readByte(address.to_ulong() - blockoffset + i );
+                CacheMem [blocknumber][i + 3] = data.to_ulong();
+            }
+            
+            CacheMem[blocknumber][0] = 1;
+            int index = 3 + blockoffset;
+            bitset <32> output;
+            bitset <8> byte1,byte2,byte3,byte4;
+
+            
+                
+                byte4 = CacheMem [blocknumber][index + 0];
+                byte3 = CacheMem [blocknumber][index + 1];
+                byte2 = CacheMem [blocknumber][index + 2];
+                byte1 = CacheMem [blocknumber][index + 3];
+
+                unite (output, byte1, byte2, byte3, byte4);
+
+
+                isb.mem_register = output.to_ulong();
+            
         }
+
+        
          
     }
 
@@ -121,8 +151,8 @@ class Cache{
             int blocknumber = address.to_ullong() / BlockSize;
             int tag = blocknumber / numblocks;
             blocknumber %= numblocks;
+        
 
-         
          if(choice == 1)
          {
             
