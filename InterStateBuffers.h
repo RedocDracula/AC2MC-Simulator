@@ -170,7 +170,6 @@ class InterStateBuffers{
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
 			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
 			cout<<"*************************************************\n";
-
 		}
 };
 	

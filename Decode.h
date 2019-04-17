@@ -481,24 +481,6 @@ class Decode{
 
 				}
 
-        /*
-        //Concatenated opcode func3 and func7 and checked for ALU_OP
-        string relStr;
-        relStr = opcode.to_string();
-        if(hasFunc3){
-            relStr = relStr + func3.to_string(); 
-            if(hasFunc7){
-                relStr = relStr + func7.to_string();
-            }
-            else{
-                relStr = relStr + "-1";
-            }
-        }
-        else{
-            relStr = relStr + "-1";
-        }
-        */
-
         //Updated ALU_OP
 
         if(stallA || stallB || stallC){
