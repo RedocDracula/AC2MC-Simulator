@@ -32,24 +32,24 @@ class Cache{ // Cache has 2^8 lines now.
 
     void ReadCache(MemoryAccess &memobject, InterStateBuffers &isb, bitset <16> address){
         bitset <2> word; //block offset
-        bitset <7> set,tag;
+        bitset <7> line,tag;
         int k = 0;
         for(int i = 0 ; i <= 1 ; i++)
             word[k++] = address[i];
         k = 0;
         for(int i = 2; i <= 8 ; i++)
-            set[k++] = address[i];
+            line[k++] = address[i];
         k = 0;
         for(int i = 9 ; i <= 15 ; i++)
             tag[k++] = address[i];
         
-        int setindex = set.to_ulong();
+        int lineindex = line.to_ulong();
 
         bool hit = 0;
 
-        for(int i = 0 ; i < CacheMem[setindex].size() ; i++){
-            if(){
-
+        for(int i = 0 ; i < Tag.size() ; i++){
+            if(Tag[i] == tag.to_ulong()){
+                
             }
         }
 
