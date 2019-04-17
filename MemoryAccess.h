@@ -11,7 +11,7 @@ using namespace std;
 
 class  MemoryAccess {
 private:
-	
+	set <int> occupiedIndex;
 	map <int , bitset <BYTE> > MEM; 
 	
 	void divide (bitset <32> source , bitset <8> & byte1 , bitset<8> & byte2 , bitset <8> & byte3 , bitset <8> & byte4) {
@@ -51,6 +51,7 @@ public:
 		bitset <32> source = isb.RM.readBitset();
 		int index = isb.RZ.readInt();  
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
+		occupiedIndex.insert(index);
 
 		// Write to its position
 		MEM [index + 0] = byte4;
@@ -67,7 +68,7 @@ public:
 
 		
 		int index = address;  
-		
+		occupiedIndex.insert(index);
 		divide(source,byte1, byte2, byte3 , byte4); // byte1 lsb
 		// Write to its position
 		MEM [index + 0] = byte4;
@@ -164,7 +165,12 @@ public:
 		}
 		isb.mem_register = bitsetRead(output);
 	}
-
+	void dump () {
+		for (auto elem : occupiedIndex ) {
+			readWord (elem);
+		}
+	
+	}
 
 	void Test () {
 		cout << "Printing Mem" <<endl;
