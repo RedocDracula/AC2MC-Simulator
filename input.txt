@@ -5,7 +5,7 @@ var1: .word 12 10 13 7 4 22 19 11 23 8
 la x3, var1
 addi x4, x0,9
 jal x1,B_Sort
-addi x5,x0,11
+addi x5,x0,2
 addi x6,x0,0
 addi x7,x4,0
 jal x1,B_Search
@@ -37,15 +37,15 @@ B_Search:
     lw x1,8(sp)
     addi sp,sp,12
     
-    jalr x0,x1,0
+    jalr x0,0(x1)
     
     returnFound:
     add x12,x0,x8
-    jalr x0,x1,0
+    jalr x0,0(x1)
     
     returnNotFound:
     addi x12,x0,-1
-    jalr x0,x1,0
+    jalr x0,0(x1)
 
 B_Sort:
     addi x5,x0,0
@@ -68,5 +68,5 @@ B_Sort:
         addi x5,x5,1
         beq x0,x0,outerloop
     exit1:
-    jalr x0, x1,0
+    jalr x0,0(x1)
 Exit:

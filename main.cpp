@@ -169,13 +169,13 @@ int main(){
 	cin>>ch;
 	if(ch ==1){
 		isb.enablePipe = false;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		char c;
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
 		isb.printISB = false;
-		cout<<" Run step by step ? (y/n)"<<endl;
+		cout<<" Run step by step ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') runStepByStep = true;
 		else runStepByStep = false;		
@@ -184,11 +184,11 @@ int main(){
 		isb.enablePipe = true;
 		isb.enableDF = false;
 		char c;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
-		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printISB = true;
 		else isb.printISB = false;
@@ -197,11 +197,11 @@ int main(){
 		isb.enablePipe = true;
 		isb.enableDF = true;
 		char c;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
-		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printISB = true;
 		else isb.printISB = false;
@@ -366,7 +366,7 @@ int main(){
 			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 200)
+			if(j >= 4)
 				break;
 			
 			if(i==1){
