@@ -20,7 +20,7 @@ class Cache{
     int numblocks;
     int coldmisses,datamiss;
     int accesses;
-
+    int capacity;
     void divide (bitset <32> source , bitset <8> & byte1 , bitset<8> & byte2 , bitset <8> & byte3 , bitset <8> & byte4) {
 		int k=0,l=0,m=0,n=0;
 		for(int i = 0 ; i <= 7 ; i++)
@@ -67,6 +67,7 @@ class Cache{
         coldmisses = 0;
         datamiss = 0;
         accesses = 0;
+        capacity = 0;
         
     }
 
@@ -102,7 +103,6 @@ class Cache{
                 byte1 = CacheMem [blocknumber][index + 3];
 
                 unite (output, byte1, byte2, byte3, byte4);
-
                 isb.mem_register = output.to_ulong();
             }
             else if(choice == 2){
@@ -113,16 +113,23 @@ class Cache{
         }
 
         if(tag != tagfound || validdata == 0 ){
-            datamiss++;
-
-           
+            
+            if(validdata == 1){
+                isb.conflict_misses++;
+            }
+            if(validdata == 0){
+                isb.cold_misses++;
+            }
+            if(capacity == numblocks){
+                isb.capacity_misses++;
+            }
 
             for(int i = 0 ; i < BlockSize ; i++){
                 
                 bitset <8> data = memobject.readByte(address.to_ulong() - blockoffset + i );
                 CacheMem [blocknumber][i + 3] = data.to_ulong();
             }
-            
+            capacity++;
             CacheMem[blocknumber][0] = 1;
             int index = 3 + blockoffset;
             bitset <32> output;
@@ -136,7 +143,6 @@ class Cache{
                 byte1 = CacheMem [blocknumber][index + 3];
 
                 unite (output, byte1, byte2, byte3, byte4);
-
 
                 isb.mem_register = output.to_ulong();
             
@@ -172,7 +178,6 @@ class Cache{
             CacheMem[blocknumber][index + 3] = byte1.to_ulong();
             
             CacheMem[blocknumber][0] = 1; // tell that data is valid.
-            
             memobject.writeWord(isb);
         }
         else if(choice == 2){
@@ -191,12 +196,9 @@ class Cache{
             memobject.writeByte(isb);
         }
 
+        capacity++;
+
     }
 
-    void CacheStats(){
-        cout<<"==================== CACHE STATS ===================="<<endl;
-        cout<<" 1. data misses : "<<datamiss<<endl;
-        cout<<" 2. cold misses : "<<coldmisses<<endl;
-        cout<<" 3. Cache Acceses : "<<accesses<< endl;
-    }
+  
 };

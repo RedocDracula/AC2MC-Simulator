@@ -95,6 +95,9 @@ class InterStateBuffers{
 					// Control
 		bool printISBspecific;	// E/D printing for a specific instruction, handle later
 					// Control, decode(maybe)
+		int conflict_misses;
+		int cold_misses;
+		int capacity_misses;
 
 		InterStateBuffers(){
 			PC = 1;
@@ -149,6 +152,9 @@ class InterStateBuffers{
 			ppWrite = 0;
 			numStall = 0;
 			totalCycles = 0;
+			cold_misses = 0;
+			capacity_misses =  0;
+			conflict_misses = 0;
 		}
 
 		void resetAll(){
