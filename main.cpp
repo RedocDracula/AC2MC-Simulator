@@ -533,11 +533,13 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy,Cache &c
 	else{
 		if(isb.isMemM == true){
 				if(isb.insTypeM == 4){
-					memAccess.writeWord(isb);
+					if(isb.enableCache) cache.WriteCache(memAccess,isb,1);
+					else memAccess.writeWord(isb);
 					muxy.MUX_Y_SELECT = 1;
 				}
 				else {
-					memAccess.readWord(isb);
+					if(isb.enableCache) cache.ReadCache(memAccess,isb,1);
+					else memAccess.readWord(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 				}
 		}
@@ -601,8 +603,8 @@ void printSummary(InterStateBuffers &isb){
 	cout<<" Total Instruction Cache access count \t:\t"<<isb.accesscount<<endl;
 	cout<<" Total Instruction Cache hit count \t:\t"<<isb.hitcount<<endl;
 	cout<<" Total Instruction Cache cold miss \t:\t"<<isb.coldmiss<<endl;
-	cout<<" Total Data Cache access count \t:\t"<<isb.accesscount<<endl;
-	cout<<" Total Data Cache hit count \t:\t"<<isb.hitcount<<endl;
+	cout<<" Total Data Cache access count \t:\t"<<isb.accesses_data<<endl;
+	cout<<" Total Data Cache hit count \t:\t"<<isb.hits_data<<endl;
 	cout<<" Total Data Cache cold miss \t:\t"<<isb.cold_misses_data<<endl;
 	cout<<" Total Data Cache conflict miss \t:\t"<<isb.conflict_misses_data<<endl;
 	cout<<" Total Data Cache capacity miss \t:\t"<<isb.capacity_misses_data<<endl;

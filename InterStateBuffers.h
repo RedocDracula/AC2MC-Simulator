@@ -79,6 +79,8 @@ class InterStateBuffers{
 		int conflict_misses_data;
 		int cold_misses_data;
 		int capacity_misses_data;
+		int accesses_data;
+		int hits_data;
 
 		//Write back location:- stores register number for writeback, 
 		//-1 for SB type where no write back occurs.
@@ -162,6 +164,8 @@ class InterStateBuffers{
 			cold_misses_data = 0;
 			capacity_misses_data =  0;
 			conflict_misses_data = 0;
+			accesses_data = 0;
+			hits_data = 0;
 		}
 
 		void resetAll(){

@@ -74,6 +74,7 @@ class Cache{
     void ReadCache(MemoryAccess &memobject, InterStateBuffers &isb,int choice){ // choice 1 for word, choice 2 for byte
          bitset <12> address = isb.RZ.readInt();
          accesses++;
+         isb.accesses_data++;
          int blockoffset = address.to_ulong() % BlockSize;
          int blocknumber = address.to_ullong() / BlockSize;
          int tag = blocknumber / numblocks;
@@ -89,7 +90,7 @@ class Cache{
          }
 
         if(tagfound == tag && validdata == 1){
-          
+            isb.hits_data++;
             int index = 3+blockoffset;
             CacheMem[blocknumber][2]++; // update hits
 
@@ -115,13 +116,13 @@ class Cache{
         if(tag != tagfound || validdata == 0 ){
             
             if(validdata == 1){
-                isb.conflict_misses++;
+                isb.conflict_misses_data++;
             }
             if(validdata == 0){
-                isb.cold_misses++;
+                isb.cold_misses_data++;
             }
             if(capacity == numblocks){
-                isb.capacity_misses++;
+                isb.capacity_misses_data++;
             }
 
             for(int i = 0 ; i < BlockSize ; i++){
@@ -154,6 +155,7 @@ class Cache{
 
     void WriteCache(MemoryAccess &memobject, InterStateBuffers &isb, int choice){
             accesses++;
+            isb.accesses_data++;
             bitset <12> address = isb.RZ.readInt();
             int blockoffset = address.to_ulong() % BlockSize;
             int blocknumber = address.to_ullong() / BlockSize;
