@@ -49,6 +49,7 @@ class InterStateBuffers{
 		// For stalling
 		bool stall;
 		int numStall;
+		int totalCycles;
 
 		int hazard_type; /* 0 No Branch , 1 Jal ,  2 Jalr ,3 branch */
 		int branch_address_def;
@@ -66,9 +67,9 @@ class InterStateBuffers{
 		int nextPC;
 
 		int pWrite;     // holds the write register value for the previous instruction
-    	int ppWrite;    // the instruction before that
-    	string pInst;      // instruction
-    	string ppInst;     //
+    int ppWrite;    // the instruction before that
+    string pInst;      // instruction
+    string ppInst;     //
 
 
 
@@ -143,6 +144,7 @@ class InterStateBuffers{
 			pWrite = 0;
 			ppWrite = 0;
 			numStall = 0;
+			totalCycles = 0;
 		}
 
 		void resetAll(){
@@ -158,7 +160,6 @@ class InterStateBuffers{
 
 		void printAll(){
 			cout<<"********** Inter State Buffer Values ***********\n";
-			cout<<"\tIR\t:\t"<<IR.readBitset()<<endl;
 			cout<<"\tRA\t:\t"<<RA.readInt()<<endl;
 			cout<<"\tRB\t:\t"<<RB.readInt()<<endl;
 			cout<<"\tRM\t:\t"<<RM.readInt()<<endl;
