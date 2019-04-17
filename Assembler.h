@@ -51,6 +51,16 @@ void  assembler_initiate(MemoryAccess &memobject)
 
     while(getline(ifile,current))
     {
+        bool useful = false;
+        for(int i = 0 ; i < current.size() ; i++)
+        {
+            if(isalpha(current[i]))
+                useful = 1;
+        }
+        
+        if(!useful){
+            continue;
+        }
         
         if(current == ".data"){
             start = 1;
@@ -72,7 +82,6 @@ void  assembler_initiate(MemoryAccess &memobject)
             string directive;
             ss >> token;
             ss >> directive;
-            cout<<" DIRCTIVE!!!!!!!!!!!!! "<<directive<<endl;
             if(directive == ".word"){
                 Word = true;
             }
