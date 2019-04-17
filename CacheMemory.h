@@ -19,6 +19,7 @@ class Cache{
     int CacheSize, BlockSize,choice,waysofset;
     int numblocks;
     int coldmisses,datamiss;
+    int accesses;
 
     void divide (bitset <32> source , bitset <8> & byte1 , bitset<8> & byte2 , bitset <8> & byte3 , bitset <8> & byte4) {
 		int k=0,l=0,m=0,n=0;
@@ -65,12 +66,13 @@ class Cache{
         
         coldmisses = 0;
         datamiss = 0;
-
+        accesses = 0;
         
     }
 
     void ReadCache(MemoryAccess &memobject, InterStateBuffers &isb,int choice){ // choice 1 for word, choice 2 for byte
          bitset <12> address = isb.RZ.readInt();
+         accesses++;
          int blockoffset = address.to_ulong() % BlockSize;
          int blocknumber = address.to_ullong() / BlockSize;
          int tag = blocknumber / numblocks;
@@ -145,7 +147,7 @@ class Cache{
     }
 
     void WriteCache(MemoryAccess &memobject, InterStateBuffers &isb, int choice){
-         
+            accesses++;
             bitset <12> address = isb.RZ.readInt();
             int blockoffset = address.to_ulong() % BlockSize;
             int blocknumber = address.to_ullong() / BlockSize;
@@ -195,5 +197,6 @@ class Cache{
         cout<<"==================== CACHE STATS ===================="<<endl;
         cout<<" 1. data misses : "<<datamiss<<endl;
         cout<<" 2. cold misses : "<<coldmisses<<endl;
+        cout<<" 3. Cache Acceses : "<<accesses<< endl;
     }
 };
