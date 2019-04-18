@@ -19,7 +19,8 @@ class Cache{
     int CacheSize, BlockSize,choice,waysofset;
     int numblocks;
     int coldmisses,datamiss;
-
+    int accesses;
+    int capacity;
     void divide (bitset <32> source , bitset <8> & byte1 , bitset<8> & byte2 , bitset <8> & byte3 , bitset <8> & byte4) {
 		int k=0,l=0,m=0,n=0;
 		for(int i = 0 ; i <= 7 ; i++)
@@ -65,13 +66,15 @@ class Cache{
         
         coldmisses = 0;
         datamiss = 0;
-
+        accesses = 0;
+        capacity = 0;
         
     }
 
     void ReadCache(MemoryAccess &memobject, InterStateBuffers &isb,int choice){ // choice 1 for word, choice 2 for byte
          bitset <12> address = isb.RZ.readInt();
-
+         accesses++;
+         isb.accesses_data++;
          int blockoffset = address.to_ulong() % BlockSize;
          int blocknumber = address.to_ullong() / BlockSize;
          int tag = blocknumber / numblocks;
@@ -80,11 +83,14 @@ class Cache{
          int validdata = CacheMem[blocknumber][0]; // validity
          int tagfound = CacheMem[blocknumber][1]; // tag 
 
+         
+
          if(validdata == 0){
             coldmisses += 1;
          }
 
         if(tagfound == tag && validdata == 1){
+            isb.hits_data++;
             int index = 3+blockoffset;
             CacheMem[blocknumber][2]++; // update hits
 
@@ -98,7 +104,6 @@ class Cache{
                 byte1 = CacheMem [blocknumber][index + 3];
 
                 unite (output, byte1, byte2, byte3, byte4);
-
                 isb.mem_register = output.to_ulong();
             }
             else if(choice == 2){
@@ -108,21 +113,56 @@ class Cache{
 
         }
 
-        if(tag != tagfound){
-            datamiss++;
+        if(tag != tagfound || validdata == 0 ){
+            
+            if(validdata == 1){
+                isb.conflict_misses_data++;
+            }
+            if(validdata == 0){
+                isb.cold_misses_data++;
+            }
+            if(capacity == numblocks){
+                isb.capacity_misses_data++;
+            }
+
+            for(int i = 0 ; i < BlockSize ; i++){
+                
+                bitset <8> data = memobject.readByte(address.to_ulong() - blockoffset + i );
+                CacheMem [blocknumber][i + 3] = data.to_ulong();
+            }
+            capacity++;
+            CacheMem[blocknumber][0] = 1;
+            int index = 3 + blockoffset;
+            bitset <32> output;
+            bitset <8> byte1,byte2,byte3,byte4;
+
+            
+                
+                byte4 = CacheMem [blocknumber][index + 0];
+                byte3 = CacheMem [blocknumber][index + 1];
+                byte2 = CacheMem [blocknumber][index + 2];
+                byte1 = CacheMem [blocknumber][index + 3];
+
+                unite (output, byte1, byte2, byte3, byte4);
+
+                isb.mem_register = output.to_ulong();
+            
         }
+
+        
          
     }
 
     void WriteCache(MemoryAccess &memobject, InterStateBuffers &isb, int choice){
-         
+            accesses++;
+            isb.accesses_data++;
             bitset <12> address = isb.RZ.readInt();
             int blockoffset = address.to_ulong() % BlockSize;
             int blocknumber = address.to_ullong() / BlockSize;
             int tag = blocknumber / numblocks;
             blocknumber %= numblocks;
+        
 
-         
          if(choice == 1)
          {
             
@@ -140,7 +180,6 @@ class Cache{
             CacheMem[blocknumber][index + 3] = byte1.to_ulong();
             
             CacheMem[blocknumber][0] = 1; // tell that data is valid.
-            
             memobject.writeWord(isb);
         }
         else if(choice == 2){
@@ -159,11 +198,9 @@ class Cache{
             memobject.writeByte(isb);
         }
 
+        capacity++;
+
     }
 
-    void CacheStats(){
-        cout<<"==================== CACHE STATS ===================="<<endl;
-        cout<<" 1. data misses : "<<datamiss<<endl;
-        cout<<" 2. cold misses : "<<coldmisses<<endl;
-    }
+  
 };

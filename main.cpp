@@ -19,11 +19,12 @@
 #include"MemoryAccess.h"
 #include"InterStateBuffers.h"
 #include"Assembler.h"
+#include"CacheMemory.h"
 
 using namespace std;
 
 void findLabels(string,vector<string>&,vector<int>&);
-void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &);
+void memory(InterStateBuffers &,MemoryAccess & ,MUX_Y &,Cache &);
 void writeBack(InterStateBuffers &, RegUpdate &, Registry_File &);
 void print(int i, InterStateBuffers &, Registry_File &);
 void updateISB(InterStateBuffers &);
@@ -149,6 +150,19 @@ int main(){
 	oFile.close();
 	oFile2.close();
 
+	char cacheChoice;
+	cout<<"Enable cache ? (y/n) : ";
+	cin>>cacheChoice;
+	int cs=512,bs=4;
+	if(cacheChoice=='y'||cacheChoice=='Y'){
+		isb.enableCache = true;
+		cout<<" Enter cache size in Bytes (recommended size - 512 B) : ";
+		cin>>cs;
+		cout<<" Enter cache block size in Bytes (recommended size - 4 B) : ";
+		cin>>bs;
+	}
+	else isb.enableCache = true;
+
 	Registry_File rFile;
 	Fetch fetch;
 	MUX_Y muxy;
@@ -156,6 +170,7 @@ int main(){
 	RegUpdate regUpdate;
 	ALU alu;
 	IAG iag;
+	Cache cache(cs,bs,1,1);
 
 	decode.initialise();
 		
@@ -169,13 +184,13 @@ int main(){
 	cin>>ch;
 	if(ch ==1){
 		isb.enablePipe = false;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		char c;
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
 		isb.printISB = false;
-		cout<<" Run step by step ? (y/n)"<<endl;
+		cout<<" Run step by step ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') runStepByStep = true;
 		else runStepByStep = false;		
@@ -184,11 +199,11 @@ int main(){
 		isb.enablePipe = true;
 		isb.enableDF = false;
 		char c;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
-		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printISB = true;
 		else isb.printISB = false;
@@ -197,11 +212,11 @@ int main(){
 		isb.enablePipe = true;
 		isb.enableDF = true;
 		char c;
-		cout<<" Show register value after every cycle ? (y/n)"<<endl;
+		cout<<" Show register value after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printRegFile = true;
 		else isb.printRegFile = false;
-		cout<<" Show inter state buffer values after every cycle ? (y/n)"<<endl;
+		cout<<" Show inter state buffer values after every cycle ? (y/n)  ";
 		cin>>c;
 		if(c=='y'||c=='Y') isb.printISB = true;
 		else isb.printISB = false;
@@ -227,7 +242,7 @@ int main(){
 
 			decode.decoder(isb,rFile);
 			alu.compute(isb);
-			memory(isb, memAccess, muxy);
+			memory(isb, memAccess, muxy,cache);
 			writeBack(isb, regUpdate, rFile);
 			iag.step(isb,alu);
 			isb.resetAll();
@@ -303,7 +318,7 @@ int main(){
 				if(end)	updateISB(isb);
 			}
 			else if(i==4) {
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy,cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -325,7 +340,7 @@ int main(){
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy,cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -366,7 +381,7 @@ int main(){
 			isb.isMispred = false;
 			if(end)
 				j++;
-			if(j >= 4|| i > 200)
+			if(j >= 4)
 				break;
 			
 			if(i==1){
@@ -417,7 +432,7 @@ int main(){
 				if(end)	updateISB(isb);
 			}
 			else if(i==4) {
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy, cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -439,7 +454,7 @@ int main(){
 			}
 			else{
 				writeBack(isb, regUpdate, rFile);
-				memory(isb, memAccess, muxy);
+				memory(isb, memAccess, muxy, cache);
 				if(!isb.stall) alu.compute(isb);
 				decode.decoder(isb,rFile);
 				if(isb.stall){
@@ -494,15 +509,17 @@ void findLabels(string inputFileName, vector<string> &labelNames, vector<int> &l
 	iFile.close();
 }
 
-void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
+void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy,Cache &cache){
 	if(!isb.enablePipe){
 			if(isb.isMem == true){
 				if(isb.insType == 4){
-					memAccess.writeWord(isb);
+					if(isb.enableCache) cache.WriteCache(memAccess,isb,1);
+					else memAccess.writeWord(isb);
 					muxy.MUX_Y_SELECT = 1;
 				}
 				else {
-					memAccess.readWord(isb);
+					if(isb.enableCache) cache.ReadCache(memAccess,isb,1);
+					else memAccess.readWord(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 				}
 		}
@@ -516,11 +533,13 @@ void memory(InterStateBuffers &isb,MemoryAccess &memAccess ,MUX_Y &muxy){
 	else{
 		if(isb.isMemM == true){
 				if(isb.insTypeM == 4){
-					memAccess.writeWord(isb);
+					if(isb.enableCache) cache.WriteCache(memAccess,isb,1);
+					else memAccess.writeWord(isb);
 					muxy.MUX_Y_SELECT = 1;
 				}
 				else {
-					memAccess.readWord(isb);
+					if(isb.enableCache) cache.ReadCache(memAccess,isb,1);
+					else memAccess.readWord(isb);
 					muxy.MUX_Y_SELECT = 2; // for getting register val from memory
 				}
 		}
@@ -581,6 +600,14 @@ void printSummary(InterStateBuffers &isb){
 	cout<<" Total Cycles \t\t:\t"<<isb.totalCycles<<endl;
 	cout<<" Total Stalls \t\t:\t"<<isb.numStall<<endl;
 	cout<<" Total Misprediction \t:\t"<<isb.mispredNumber<<endl;
+	cout<<" Total Instruction Cache access count \t:\t"<<isb.accesscount<<endl;
+	cout<<" Total Instruction Cache hit count \t:\t"<<isb.hitcount<<endl;
+	cout<<" Total Instruction Cache cold miss \t:\t"<<isb.coldmiss<<endl;
+	cout<<" Total Data Cache access count \t:\t"<<isb.accesses_data<<endl;
+	cout<<" Total Data Cache hit count \t:\t"<<isb.hits_data<<endl;
+	cout<<" Total Data Cache cold miss \t:\t"<<isb.cold_misses_data<<endl;
+	cout<<" Total Data Cache conflict miss \t:\t"<<isb.conflict_misses_data<<endl;
+	cout<<" Total Data Cache capacity miss \t:\t"<<isb.capacity_misses_data<<endl;
 }
 
 void updateAfterDecoder(InterStateBuffers &isb){

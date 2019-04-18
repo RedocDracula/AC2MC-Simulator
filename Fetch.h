@@ -6,6 +6,8 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <algorithm>
 
 // TODO 
 #define MEM_SRC "machineCode.txt"
@@ -21,13 +23,24 @@ using namespace std;
 	3 -> brach 
 */
 
+
+
 class Fetch {
 	
 	private:
+		
 		map <int , bitset <REG_WIDTH> > mem_map;
+		vector <int > icache; 
+		int cachesize ;
 		InterStateBuffers * buf;
 		map <int , int> itype_map;
 		
+
+		int hitCount;
+		int accessCount;
+		int coldMisses;
+		int loadCount;
+
 		int hazardType;
 		bitset <REG_WIDTH > branch_address;
 		bitset <REG_WIDTH > branch_address_def;
@@ -114,9 +127,22 @@ class Fetch {
 	}
 
 
-	Fetch() {
+	Fetch(int n = 16) {
 		ifstream inpFile (MEM_SRC);
 		string line;
+
+		cachesize = n;
+		icache.resize(cachesize);
+		loadCount = 4;
+
+		hitCount = 0;
+		accessCount = 0;
+		coldMisses = 0;
+
+		for (int i  = 0; i < n; i++ ) {
+			icache[i] = -1; // value nhi hai
+		}
+		
 		while(getline (inpFile , line ) ){
 			string lineNo, command , type;
 			stringstream ss (line);
@@ -132,17 +158,45 @@ class Fetch {
 		buf.hazard_type = hazardType;
 		buf.branch_address = getBrachAddress();
 		buf.branch_address_def = getDefBrachAddress(); 
+
 	}
+
+void bufStats (InterStateBuffers & buf) {
+		buf.hitcount = hitCount;
+		buf.coldmiss = coldMisses;
+		buf.accesscount = accessCount;
+}
 	
+	void updateStats (int pc) { // search and load some values
+		accessCount++;
+		if (find (icache.begin() ,icache.end(), pc ) != icache.end()) { // mil gaya
+			hitCount++;
+			return;
+		} 
+		
+		if ( find (icache.begin() ,icache.end(), -1 )  != icache.end()) {
+			coldMisses++; // handlemiss, 8 aur load ke le
+		} 
+		// handlemiss
+		sort(icache.begin() , icache.end() ); // Remove First 8 elements
+		for (int i = 0; i < loadCount;i++ ) {
+			icache[i] = pc;
+			pc++;
+		}
+
+	}
+
+
 	void get(InterStateBuffers & buf, Registry_File regs) {
 		buf.IR.writeBitset ( mem_map[buf.PC]);
 		buf.insType = itype_map[ buf.PC ]; // Instype and new intructions fetch completed
-		 
+		updateStats(buf.PC);
+		bufStats(buf);
+		
 		if (buf.enablePipe) {
 			hazardType = detectControlHazards(buf);
 			setBrachAddress(buf, regs);
-			updateBuffer(buf);
-			
+			updateBuffer(buf);	
 		}
 	}
 

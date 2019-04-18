@@ -46,6 +46,8 @@ class InterStateBuffers{
 		int insType;
 		string ALU_OP;
 		bool isjalr, isMem;
+
+		bool enableCache;
 		// For stalling
 		bool stall;
 		int numStall;
@@ -71,9 +73,14 @@ class InterStateBuffers{
     string pInst;      // instruction
     string ppInst;     //
 
-
-
-
+		int coldmiss;
+		int hitcount;
+		int accesscount;
+		int conflict_misses_data;
+		int cold_misses_data;
+		int capacity_misses_data;
+		int accesses_data;
+		int hits_data;
 
 		//Write back location:- stores register number for writeback, 
 		//-1 for SB type where no write back occurs.
@@ -93,6 +100,9 @@ class InterStateBuffers{
 					// Control
 		bool printISBspecific;	// E/D printing for a specific instruction, handle later
 					// Control, decode(maybe)
+		int conflict_misses;
+		int cold_misses;
+		int capacity_misses;
 
 		InterStateBuffers(){
 			PC = 1;
@@ -141,10 +151,21 @@ class InterStateBuffers{
 			isMispred = false;
 			nextPC = 0;
 
+			enableCache = true;
+
 			pWrite = 0;
 			ppWrite = 0;
 			numStall = 0;
 			totalCycles = 0;
+			
+			coldmiss = 0;
+			hitcount = 0;
+			accesscount = 0;
+			cold_misses_data = 0;
+			capacity_misses_data =  0;
+			conflict_misses_data = 0;
+			accesses_data = 0;
+			hits_data = 0;
 		}
 
 		void resetAll(){
@@ -166,7 +187,6 @@ class InterStateBuffers{
 			cout<<"\tRZ\t:\t"<<RZ.readInt()<<endl;
 			cout<<"\tRY\t:\t"<<RY.readInt()<<endl;
 			cout<<"*************************************************\n";
-
 		}
 };
 	
