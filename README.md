@@ -5,10 +5,11 @@ Languages:- C++, Electron JavaScript
 
 Team members : 
             [Harshit Malik](https://github.com/HarshitMalik)   :- 2017csb1078
-            Hersh Dhillon    :- 2017csb1079
-            Jeetu Kumar      :- 2017csb1083
-            Shreekanth Ajith :- 2017csb1110
-            Nilansh Rajput   :- 2017csb1092
+            
+            [Hersh Dhillon](https://github.com/hershd23)    :- 2017csb1079
+            [Jeetu Kumar](https://github.com/i-am-g2)      :- 2017csb1083
+            [Shreekanth Ajith](https://github.com/RedocDracula) :- 2017csb1110
+            [Nilansh Rajput](https://github.com/Nilanshrajput)   :- 2017csb1092
 
 
 HOW TO RUN:-
