@@ -4,7 +4,7 @@ CS-204 project, RISC-V SIMULATOR, GROUP 13:-
 Languages:- C++, Electron JavaScript 
 
 Team members : 
-            [a link](https://github.com/HarshitMalik)   :- 2017csb1078
+            [Harshit Malik](https://github.com/HarshitMalik)   :- 2017csb1078
             Hersh Dhillon    :- 2017csb1079
             Jeetu Kumar      :- 2017csb1083
             Shreekanth Ajith :- 2017csb1110
